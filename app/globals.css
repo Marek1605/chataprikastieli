@@ -1,0 +1,473 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Font loading optimization - use font-display: swap for better LCP */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@400;500;600&display=swap');
+
+@layer base {
+  /* Root variables for consistent theming */
+  :root {
+    --header-height: 64px;
+    --container-padding: 1rem;
+    --touch-target: 44px; /* Minimum touch target size */
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      --header-height: 72px;
+      --container-padding: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --header-height: 80px;
+      --container-padding: 2rem;
+    }
+  }
+
+  /* Smooth scrolling with reduced motion support */
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--header-height);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    @apply font-body text-gray-800 bg-cream-light antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-medium text-graphite;
+    text-wrap: balance;
+  }
+
+  h1 {
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl;
+  }
+
+  h3 {
+    @apply text-xl sm:text-2xl md:text-3xl;
+  }
+
+  p {
+    @apply leading-relaxed;
+    text-wrap: pretty;
+  }
+
+  /* Better focus styles for accessibility */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-wood;
+  }
+
+  /* Remove tap highlight on mobile */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Ensure images don't overflow */
+  img {
+    @apply max-w-full h-auto;
+  }
+
+  /* Selection styling */
+  ::selection {
+    @apply bg-wood/20 text-graphite;
+  }
+}
+
+@layer components {
+  /* Container with responsive padding */
+  .container-custom {
+    @apply max-w-7xl mx-auto;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+  }
+
+  /* Buttons with proper touch targets */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium rounded-lg transition-all duration-300 whitespace-nowrap;
+    min-height: var(--touch-target);
+    touch-action: manipulation;
+  }
+
+  .btn-primary {
+    @apply bg-graphite text-white;
+    @apply hover:bg-black hover:-translate-y-0.5 hover:shadow-lg;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-wood focus-visible:ring-offset-2;
+    @apply active:scale-[0.98] active:translate-y-0;
+  }
+
+  .btn-outline {
+    @apply bg-transparent text-graphite border-2 border-graphite;
+    @apply hover:bg-graphite hover:text-white;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-wood focus-visible:ring-offset-2;
+    @apply active:scale-[0.98];
+  }
+
+  .btn-lg {
+    @apply px-8 py-4 text-base;
+    min-height: 52px;
+  }
+
+  /* Section styling */
+  .section-label {
+    @apply inline-block text-xs font-semibold uppercase tracking-widest text-wood mb-4;
+  }
+
+  .section-title {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-4 sm:mb-6;
+  }
+
+  .section-subtitle {
+    @apply text-base sm:text-lg text-gray-600 max-w-2xl mx-auto;
+  }
+
+  /* Calendar styles - touch optimized */
+  .calendar-day {
+    @apply aspect-square flex items-center justify-center text-sm rounded cursor-pointer transition-all duration-150 relative;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
+  }
+
+  .calendar-day:hover:not(.disabled):not(.booked):not(.empty) {
+    @apply bg-cream;
+  }
+
+  .calendar-day.today::after {
+    content: '';
+    @apply absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-wood rounded-full;
+  }
+
+  .calendar-day.disabled {
+    @apply text-gray-400 cursor-not-allowed;
+  }
+
+  .calendar-day.booked {
+    @apply bg-booked text-gray-400 cursor-not-allowed line-through;
+  }
+
+  .calendar-day.selected {
+    @apply bg-graphite text-white;
+  }
+
+  .calendar-day.in-range {
+    @apply bg-selected;
+  }
+
+  .calendar-day.range-start {
+    @apply bg-graphite text-white rounded-r-none;
+  }
+
+  .calendar-day.range-end {
+    @apply bg-graphite text-white rounded-l-none;
+  }
+
+  /* Form styles - touch optimized */
+  .form-input {
+    @apply w-full px-4 py-3 text-base border-2 border-cream-dark rounded-lg bg-white transition-colors duration-150;
+    @apply focus:outline-none focus:border-wood focus:ring-2 focus:ring-wood/20;
+    min-height: var(--touch-target);
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .form-input.error {
+    @apply border-error focus:border-error focus:ring-error/20;
+  }
+
+  .form-label {
+    @apply block text-sm font-medium mb-2;
+  }
+
+  .form-error {
+    @apply text-xs text-error mt-1;
+  }
+
+  /* Notice/Alert styles */
+  .notice {
+    @apply flex items-start gap-3 p-4 rounded-lg text-sm;
+  }
+
+  .notice-info {
+    @apply bg-cream text-gray-600;
+  }
+
+  .notice-warning {
+    @apply bg-amber-50 text-amber-800 border border-amber-200;
+  }
+
+  .notice-error {
+    @apply bg-red-50 text-error border border-red-200;
+  }
+
+  .notice-success {
+    @apply bg-green-50 text-success border border-green-200;
+  }
+
+  /* Card component */
+  .card {
+    @apply bg-white rounded-2xl shadow-sm overflow-hidden transition-shadow duration-300;
+    @apply hover:shadow-md;
+  }
+
+  .card-hover {
+    @apply hover:shadow-lg hover:-translate-y-1 transition-all duration-300;
+  }
+}
+
+@layer utilities {
+  /* Text utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Animation utilities */
+  .animate-on-scroll {
+    @apply opacity-0 translate-y-5 transition-all duration-700;
+  }
+
+  .animate-on-scroll.visible {
+    @apply opacity-100 translate-y-0;
+  }
+
+  /* Fade in animation */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in-down {
+    animation: fadeInDown 0.6s ease-out forwards;
+  }
+
+  /* Bounce animation */
+  .animate-bounce-slow {
+    animation: bounceSlow 2s infinite;
+  }
+
+  /* Safe area utilities for notched devices */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Text shadow for hero */
+  .text-shadow-lg {
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Keyframe animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounceSlow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Spinner */
+.spinner {
+  @apply inline-block w-5 h-5 border-2 border-cream-dark border-t-wood rounded-full;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Lightbox */
+.lightbox {
+  @apply fixed inset-0 z-[60] bg-black/95 flex items-center justify-center;
+  @apply opacity-0 invisible transition-all duration-300;
+}
+
+.lightbox.active {
+  @apply opacity-100 visible;
+}
+
+/* FAQ Accordion */
+.faq-answer {
+  @apply max-h-0 overflow-hidden transition-all duration-300 ease-out;
+}
+
+.faq-item.active .faq-answer {
+  @apply max-h-96;
+}
+
+.faq-item.active .faq-icon {
+  @apply rotate-45;
+}
+
+/* Scrollbar styling - desktop only */
+@media (min-width: 1024px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-cream;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-wood/40 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-wood/60;
+  }
+}
+
+/* Print styles for better SEO and sharing */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    @apply bg-white text-black;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn-primary {
+    @apply border-2 border-black;
+  }
+
+  .form-input {
+    @apply border-2 border-black;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .btn:hover {
+    transform: none;
+  }
+
+  .card-hover:hover {
+    transform: none;
+    box-shadow: theme('boxShadow.sm');
+  }
+}
+
+/* Landscape phone adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero-section {
+    min-height: auto;
+    padding-top: 80px;
+    padding-bottom: 40px;
+  }
+}
+
+/* Extra small breakpoint for very small phones */
+@media (max-width: 359px) {
+  :root {
+    --container-padding: 0.75rem;
+  }
+
+  .btn {
+    @apply px-4 py-2.5 text-sm;
+  }
+
+  .section-title {
+    @apply text-xl;
+  }
+}

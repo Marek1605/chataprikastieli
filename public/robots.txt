@@ -1,0 +1,19 @@
+# Robots.txt for Chata pri Kaštieli
+# https://chataprikastieli.sk
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://chataprikastieli.sk/sitemap.xml
+
+# Crawl delay for polite crawling
+Crawl-delay: 1
+
+# Block API routes from indexing
+Disallow: /api/
+Disallow: /_next/
+
+# Allow important static resources
+Allow: /_next/static/
+Allow: /assets/
