@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { locales, Locale, defaultLocale } from '@/lib/i18n';
 import { siteConfig } from '@/lib/config';
 import type { Metadata, Viewport } from 'next';
+import Providers from '@/components/Providers';
 import '../globals.css';
 
 export const dynamic = 'force-dynamic';
@@ -250,17 +251,19 @@ export default async function LocaleLayout({
       </head>
       <body className="min-h-screen bg-cream-light antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {/* Skip to main content link for accessibility */}
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-wood focus:text-white focus:rounded-lg"
-          >
-            Preskočiť na hlavný obsah
-          </a>
-          
-          <main id="main-content">
-            {children}
-          </main>
+          <Providers>
+            {/* Skip to main content link for accessibility */}
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-wood focus:text-white focus:rounded-lg"
+            >
+              Preskočiť na hlavný obsah
+            </a>
+            
+            <main id="main-content">
+              {children}
+            </main>
+          </Providers>
         </NextIntlClientProvider>
       </body>
     </html>
