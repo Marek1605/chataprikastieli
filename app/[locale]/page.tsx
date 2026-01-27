@@ -6,7 +6,7 @@ import Gallery from '@/components/Gallery';
 import Amenities from '@/components/Amenities';
 import Experience from '@/components/Experience';
 import Reset from '@/components/Reset';
-import Game2048 from '@/components/Game2048';
+import MemoryGame from '@/components/MemoryGame';
 import Pricing from '@/components/Pricing';
 import Booking from '@/components/Booking';
 import Surroundings from '@/components/Surroundings';
@@ -28,7 +28,7 @@ export default async function HomePage() {
       <Amenities />
       <Experience />
       <Reset />
-      <Game2048 />
+      <MemoryGame />
       <Pricing />
       <Booking />
       <Surroundings />

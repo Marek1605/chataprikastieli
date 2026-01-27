@@ -309,21 +309,28 @@
     "nextImage": "Nasledujúci obrázok",
     "closeGallery": "Zavrieť galériu"
   },
-  "game2048": {
-    "label": "Zahrajte si",
-    "title": "2048",
-    "subtitle": "Spojte dlaždice a dostaňte sa k číslu 2048!",
-    "score": "Skóre",
-    "best": "Najlepšie",
-    "yourBest": "Vaše najlepšie skóre",
-    "startGame": "Hrať",
-    "newGame": "Nová hra",
-    "gameOver": "Koniec hry!",
-    "youWon": "Vyhrali ste!",
-    "finalScore": "Finálne skóre",
+  "pexeso": {
+    "label": "Zahrajte sa",
+    "title": "Pexeso pre dvoch 🎴",
+    "subtitle": "Nájdite všetky páry a porazte súpera!",
+    "player1": "Hráč 1",
+    "player2": "Hráč 2",
+    "player1Name": "Meno hráča 1",
+    "player2Name": "Meno hráča 2",
+    "difficulty": "Obtiažnosť",
+    "easy": "Ľahké",
+    "medium": "Stredné",
+    "hard": "Ťažké",
+    "pairs": "párov",
+    "startGame": "Začať hru",
+    "turn": "Na ťahu",
+    "wins": "vyhráva",
+    "draw": "Remíza!",
     "playAgain": "Hrať znova",
-    "controls": "Šípky na klávesnici alebo ťahanie prstom",
+    "newGame": "Nová hra",
+    "restart": "Reštart",
+    "settings": "Nastavenia",
     "howToPlay": "Ako hrať?",
-    "instructions": "Spojte dlaždice s rovnakými číslami. Keď sa dve dlaždice s rovnakým číslom dotknú, zlúčia sa do jednej!"
+    "instructions": "Striedajte sa v otáčaní dvoch kariet. Ak nájdete pár, získate bod a hráte znova. Kto nájde viac párov, vyhráva!"
   }
 }

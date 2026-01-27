@@ -309,21 +309,28 @@
     "nextImage": "Následující obrázek",
     "closeGallery": "Zavřít galerii"
   },
-  "game2048": {
+  "pexeso": {
     "label": "Zahrajte si",
-    "title": "2048",
-    "subtitle": "Spojte dlaždice a dostaňte se k číslu 2048!",
-    "score": "Skóre",
-    "best": "Nejlepší",
-    "yourBest": "Vaše nejlepší skóre",
-    "startGame": "Hrát",
-    "newGame": "Nová hra",
-    "gameOver": "Konec hry!",
-    "youWon": "Vyhráli jste!",
-    "finalScore": "Finální skóre",
+    "title": "Pexeso pro dva 🎴",
+    "subtitle": "Najděte všechny páry a porazte soupeře!",
+    "player1": "Hráč 1",
+    "player2": "Hráč 2",
+    "player1Name": "Jméno hráče 1",
+    "player2Name": "Jméno hráče 2",
+    "difficulty": "Obtížnost",
+    "easy": "Lehké",
+    "medium": "Střední",
+    "hard": "Těžké",
+    "pairs": "párů",
+    "startGame": "Začít hru",
+    "turn": "Na tahu",
+    "wins": "vyhrává",
+    "draw": "Remíza!",
     "playAgain": "Hrát znovu",
-    "controls": "Šipky na klávesnici nebo tažení prstem",
+    "newGame": "Nová hra",
+    "restart": "Restart",
+    "settings": "Nastavení",
     "howToPlay": "Jak hrát?",
-    "instructions": "Spojte dlaždice se stejnými čísly. Když se dvě dlaždice se stejným číslem dotknou, sloučí se do jedné!"
+    "instructions": "Střídejte se v otáčení dvou karet. Pokud najdete pár, získáte bod a hrajete znovu. Kdo najde víc párů, vyhrává!"
   }
 }

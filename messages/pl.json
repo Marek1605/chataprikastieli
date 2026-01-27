@@ -309,21 +309,28 @@
     "nextImage": "Następny obraz",
     "closeGallery": "Zamknij galerię"
   },
-  "game2048": {
+  "pexeso": {
     "label": "Zagraj",
-    "title": "2048",
-    "subtitle": "Połącz kafelki i dojdź do liczby 2048!",
-    "score": "Wynik",
-    "best": "Najlepszy",
-    "yourBest": "Twój najlepszy wynik",
-    "startGame": "Graj",
-    "newGame": "Nowa gra",
-    "gameOver": "Koniec gry!",
-    "youWon": "Wygrałeś!",
-    "finalScore": "Końcowy wynik",
+    "title": "Memory dla dwóch 🎴",
+    "subtitle": "Znajdź wszystkie pary i pokonaj przeciwnika!",
+    "player1": "Gracz 1",
+    "player2": "Gracz 2",
+    "player1Name": "Imię gracza 1",
+    "player2Name": "Imię gracza 2",
+    "difficulty": "Trudność",
+    "easy": "Łatwy",
+    "medium": "Średni",
+    "hard": "Trudny",
+    "pairs": "par",
+    "startGame": "Rozpocznij grę",
+    "turn": "Kolej",
+    "wins": "wygrywa",
+    "draw": "Remis!",
     "playAgain": "Zagraj ponownie",
-    "controls": "Strzałki na klawiaturze lub przeciągnij palcem",
+    "newGame": "Nowa gra",
+    "restart": "Restart",
+    "settings": "Ustawienia",
     "howToPlay": "Jak grać?",
-    "instructions": "Połącz kafelki z tymi samymi liczbami. Gdy dwa kafelki z tą samą liczbą się zetkną, łączą się w jeden!"
+    "instructions": "Na zmianę odkrywajcie po dwie karty. Jeśli znajdziesz parę, zdobywasz punkt i grasz dalej. Kto znajdzie więcej par, wygrywa!"
   }
 }

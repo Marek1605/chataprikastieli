@@ -309,21 +309,28 @@
     "nextImage": "Next image",
     "closeGallery": "Close gallery"
   },
-  "game2048": {
+  "pexeso": {
     "label": "Play a game",
-    "title": "2048",
-    "subtitle": "Join the tiles and get to the 2048 tile!",
-    "score": "Score",
-    "best": "Best",
-    "yourBest": "Your best score",
-    "startGame": "Play",
-    "newGame": "New game",
-    "gameOver": "Game Over!",
-    "youWon": "You Win!",
-    "finalScore": "Final score",
+    "title": "Memory Game for Two 🎴",
+    "subtitle": "Find all pairs and beat your opponent!",
+    "player1": "Player 1",
+    "player2": "Player 2",
+    "player1Name": "Player 1 name",
+    "player2Name": "Player 2 name",
+    "difficulty": "Difficulty",
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard",
+    "pairs": "pairs",
+    "startGame": "Start game",
+    "turn": "Turn",
+    "wins": "wins",
+    "draw": "Draw!",
     "playAgain": "Play again",
-    "controls": "Arrow keys or swipe",
+    "newGame": "New game",
+    "restart": "Restart",
+    "settings": "Settings",
     "howToPlay": "How to play?",
-    "instructions": "Join tiles with the same number. When two tiles with the same number touch, they merge into one!"
+    "instructions": "Take turns flipping two cards. If you find a matching pair, you score a point and play again. Most pairs wins!"
   }
 }
