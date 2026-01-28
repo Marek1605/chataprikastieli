@@ -309,6 +309,31 @@
     "nextImage": "Nasledujúci obrázok",
     "closeGallery": "Zavrieť galériu"
   },
+  "gameHub": {
+    "label": "Zábava pre hostí",
+    "title": "Vyberte si hru 🎮",
+    "subtitle": "Zabavte sa počas pobytu! Hry môžete hrať sami, vo dvojici alebo s celou rodinou.",
+    "backToGames": "Späť na výber hier",
+    "funFact": "Vedeli ste, že vo Veľkej Fatre žije viac ako 100 medveďov?",
+    "pexeso": {
+      "title": "Pexeso pre dvoch",
+      "desc": "Klasická hra na pamäť s horskou tematikou. Kto nájde viac párov?",
+      "players": "2 hráči",
+      "time": "5-10 min"
+    },
+    "quiz": {
+      "title": "Fatranský kvíz",
+      "desc": "Otestujte svoje znalosti o prírode Veľkej Fatry a jej obyvateľoch!",
+      "players": "1+ hráčov",
+      "time": "3-5 min"
+    },
+    "snake": {
+      "title": "Had",
+      "desc": "Kultová hra v modernom prevedení. Koľko bodov získate?",
+      "players": "1 hráč",
+      "time": "2-5 min"
+    }
+  },
   "pexeso": {
     "label": "Zahrajte sa",
     "title": "Pexeso pre dvoch 🎴",
@@ -332,5 +357,40 @@
     "settings": "Nastavenia",
     "howToPlay": "Ako hrať?",
     "instructions": "Striedajte sa v otáčaní dvoch kariet. Ak nájdete pár, získate bod a hráte znova. Kto nájde viac párov, vyhráva!"
+  },
+  "quiz": {
+    "quizTitle": "Fatranský kvíz",
+    "quizSubtitle": "Otestujte svoje znalosti o prírode Veľkej Fatry!",
+    "quizInfo": "8 otázok o zvieratách, rastlinách a zaujímavostiach regiónu",
+    "startQuiz": "Začať kvíz",
+    "question": "Otázka",
+    "score": "Skóre",
+    "didYouKnow": "Vedeli ste?",
+    "nextQuestion": "Ďalšia otázka",
+    "seeResults": "Zobraziť výsledky",
+    "yourScore": "Vaše skóre",
+    "excellent": "Výborne! Ste expert na Fatru!",
+    "great": "Skvelé! Máte dobré znalosti!",
+    "good": "Dobre! Učíte sa rýchlo!",
+    "tryAgain": "Skúste to znova!",
+    "expertLevel": "Poznáte Fatru ako svoju dlaň! 🏆",
+    "goodKnowledge": "Máte solídne znalosti o našej prírode! 🌲",
+    "learnMore": "Príďte k nám a spoznajte krásy Fatry naživo! 🦌",
+    "playAgainQuiz": "Hrať znova"
+  },
+  "snake": {
+    "title": "Had 🐍",
+    "subtitle": "Zbierajte jedlo a vyhnite sa stenám!",
+    "controls": "Šípky / WASD / Swipe",
+    "yourBest": "Vaše maximum",
+    "startGame": "Hrať",
+    "score": "Skóre",
+    "best": "Rekord",
+    "gameOver": "Koniec hry!",
+    "paused": "Pauza",
+    "finalScore": "Finálne skóre",
+    "playAgain": "Hrať znova",
+    "resume": "Pokračovať",
+    "keyboardHint": "Šípky alebo WASD • Medzerník = pauza"
   }
 }

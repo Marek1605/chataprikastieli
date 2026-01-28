@@ -309,6 +309,31 @@
     "nextImage": "Následující obrázek",
     "closeGallery": "Zavřít galerii"
   },
+  "gameHub": {
+    "label": "Zábava pro hosty",
+    "title": "Vyberte si hru 🎮",
+    "subtitle": "Bavte se během pobytu! Hry můžete hrát sami, ve dvou nebo s celou rodinou.",
+    "backToGames": "Zpět na výběr her",
+    "funFact": "Věděli jste, že ve Velké Fatře žije více než 100 medvědů?",
+    "pexeso": {
+      "title": "Pexeso pro dva",
+      "desc": "Klasická hra na paměť s horskou tematikou. Kdo najde víc párů?",
+      "players": "2 hráči",
+      "time": "5-10 min"
+    },
+    "quiz": {
+      "title": "Fatranský kvíz",
+      "desc": "Otestujte své znalosti o přírodě Velké Fatry a jejích obyvatelích!",
+      "players": "1+ hráčů",
+      "time": "3-5 min"
+    },
+    "snake": {
+      "title": "Had",
+      "desc": "Kultovní hra v moderním provedení. Kolik bodů získáte?",
+      "players": "1 hráč",
+      "time": "2-5 min"
+    }
+  },
   "pexeso": {
     "label": "Zahrajte si",
     "title": "Pexeso pro dva 🎴",
@@ -332,5 +357,40 @@
     "settings": "Nastavení",
     "howToPlay": "Jak hrát?",
     "instructions": "Střídejte se v otáčení dvou karet. Pokud najdete pár, získáte bod a hrajete znovu. Kdo najde víc párů, vyhrává!"
+  },
+  "quiz": {
+    "quizTitle": "Fatranský kvíz",
+    "quizSubtitle": "Otestujte své znalosti o přírodě Velké Fatry!",
+    "quizInfo": "8 otázek o zvířatech, rostlinách a zajímavostech regionu",
+    "startQuiz": "Začít kvíz",
+    "question": "Otázka",
+    "score": "Skóre",
+    "didYouKnow": "Věděli jste?",
+    "nextQuestion": "Další otázka",
+    "seeResults": "Zobrazit výsledky",
+    "yourScore": "Vaše skóre",
+    "excellent": "Výborně! Jste expert na Fatru!",
+    "great": "Skvěle! Máte dobré znalosti!",
+    "good": "Dobře! Učíte se rychle!",
+    "tryAgain": "Zkuste to znovu!",
+    "expertLevel": "Znáte Fatru jako svou dlaň! 🏆",
+    "goodKnowledge": "Máte solidní znalosti o naší přírodě! 🌲",
+    "learnMore": "Přijeďte k nám a poznejte krásy Fatry naživo! 🦌",
+    "playAgainQuiz": "Hrát znovu"
+  },
+  "snake": {
+    "title": "Had 🐍",
+    "subtitle": "Sbírejte jídlo a vyhněte se stěnám!",
+    "controls": "Šipky / WASD / Swipe",
+    "yourBest": "Vaše maximum",
+    "startGame": "Hrát",
+    "score": "Skóre",
+    "best": "Rekord",
+    "gameOver": "Konec hry!",
+    "paused": "Pauza",
+    "finalScore": "Finální skóre",
+    "playAgain": "Hrát znovu",
+    "resume": "Pokračovat",
+    "keyboardHint": "Šipky nebo WASD • Mezerník = pauza"
   }
 }

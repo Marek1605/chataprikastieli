@@ -309,6 +309,31 @@
     "nextImage": "Następny obraz",
     "closeGallery": "Zamknij galerię"
   },
+  "gameHub": {
+    "label": "Rozrywka dla gości",
+    "title": "Wybierz grę 🎮",
+    "subtitle": "Baw się podczas pobytu! Graj sam, w parze lub z całą rodziną.",
+    "backToGames": "Powrót do wyboru gier",
+    "funFact": "Czy wiesz, że w Wielkiej Fatrze żyje ponad 100 niedźwiedzi?",
+    "pexeso": {
+      "title": "Memory dla dwóch",
+      "desc": "Klasyczna gra pamięciowa z motywem górskim. Kto znajdzie więcej par?",
+      "players": "2 graczy",
+      "time": "5-10 min"
+    },
+    "quiz": {
+      "title": "Quiz przyrodniczy",
+      "desc": "Sprawdź swoją wiedzę o przyrodzie Wielkiej Fatry i jej mieszkańcach!",
+      "players": "1+ graczy",
+      "time": "3-5 min"
+    },
+    "snake": {
+      "title": "Wąż",
+      "desc": "Kultowa gra w nowoczesnej odsłonie. Ile punktów zdobędziesz?",
+      "players": "1 gracz",
+      "time": "2-5 min"
+    }
+  },
   "pexeso": {
     "label": "Zagraj",
     "title": "Memory dla dwóch 🎴",
@@ -332,5 +357,40 @@
     "settings": "Ustawienia",
     "howToPlay": "Jak grać?",
     "instructions": "Na zmianę odkrywajcie po dwie karty. Jeśli znajdziesz parę, zdobywasz punkt i grasz dalej. Kto znajdzie więcej par, wygrywa!"
+  },
+  "quiz": {
+    "quizTitle": "Quiz przyrodniczy",
+    "quizSubtitle": "Sprawdź swoją wiedzę o przyrodzie Wielkiej Fatry!",
+    "quizInfo": "8 pytań o zwierzętach, roślinach i atrakcjach regionu",
+    "startQuiz": "Rozpocznij quiz",
+    "question": "Pytanie",
+    "score": "Wynik",
+    "didYouKnow": "Czy wiesz?",
+    "nextQuestion": "Następne pytanie",
+    "seeResults": "Zobacz wyniki",
+    "yourScore": "Twój wynik",
+    "excellent": "Doskonale! Jesteś ekspertem od Fatry!",
+    "great": "Świetnie! Masz dobrą wiedzę!",
+    "good": "Dobrze! Uczysz się szybko!",
+    "tryAgain": "Spróbuj ponownie!",
+    "expertLevel": "Znasz Fatrę jak własną kieszeń! 🏆",
+    "goodKnowledge": "Masz solidną wiedzę o naszej przyrodzie! 🌲",
+    "learnMore": "Odwiedź nas i odkryj piękno Fatry na żywo! 🦌",
+    "playAgainQuiz": "Zagraj ponownie"
+  },
+  "snake": {
+    "title": "Wąż 🐍",
+    "subtitle": "Zbieraj jedzenie i unikaj ścian!",
+    "controls": "Strzałki / WASD / Przeciągnij",
+    "yourBest": "Twój rekord",
+    "startGame": "Graj",
+    "score": "Wynik",
+    "best": "Rekord",
+    "gameOver": "Koniec gry!",
+    "paused": "Pauza",
+    "finalScore": "Końcowy wynik",
+    "playAgain": "Zagraj ponownie",
+    "resume": "Kontynuuj",
+    "keyboardHint": "Strzałki lub WASD • Spacja = pauza"
   }
 }

@@ -309,6 +309,31 @@
     "nextImage": "Next image",
     "closeGallery": "Close gallery"
   },
+  "gameHub": {
+    "label": "Guest entertainment",
+    "title": "Choose a game 🎮",
+    "subtitle": "Have fun during your stay! Play alone, with a partner, or with the whole family.",
+    "backToGames": "Back to games",
+    "funFact": "Did you know that more than 100 bears live in Veľká Fatra?",
+    "pexeso": {
+      "title": "Memory for two",
+      "desc": "Classic memory game with mountain theme. Who finds more pairs?",
+      "players": "2 players",
+      "time": "5-10 min"
+    },
+    "quiz": {
+      "title": "Nature Quiz",
+      "desc": "Test your knowledge about Veľká Fatra nature and its inhabitants!",
+      "players": "1+ players",
+      "time": "3-5 min"
+    },
+    "snake": {
+      "title": "Snake",
+      "desc": "Classic game with modern design. How many points can you get?",
+      "players": "1 player",
+      "time": "2-5 min"
+    }
+  },
   "pexeso": {
     "label": "Play a game",
     "title": "Memory Game for Two 🎴",
@@ -332,5 +357,40 @@
     "settings": "Settings",
     "howToPlay": "How to play?",
     "instructions": "Take turns flipping two cards. If you find a matching pair, you score a point and play again. Most pairs wins!"
+  },
+  "quiz": {
+    "quizTitle": "Nature Quiz",
+    "quizSubtitle": "Test your knowledge about Veľká Fatra nature!",
+    "quizInfo": "8 questions about animals, plants, and regional attractions",
+    "startQuiz": "Start quiz",
+    "question": "Question",
+    "score": "Score",
+    "didYouKnow": "Did you know?",
+    "nextQuestion": "Next question",
+    "seeResults": "See results",
+    "yourScore": "Your score",
+    "excellent": "Excellent! You're a Fatra expert!",
+    "great": "Great! You have good knowledge!",
+    "good": "Good! You're learning fast!",
+    "tryAgain": "Try again!",
+    "expertLevel": "You know Fatra like the back of your hand! 🏆",
+    "goodKnowledge": "You have solid knowledge about our nature! 🌲",
+    "learnMore": "Visit us and discover Fatra's beauty in person! 🦌",
+    "playAgainQuiz": "Play again"
+  },
+  "snake": {
+    "title": "Snake 🐍",
+    "subtitle": "Collect food and avoid the walls!",
+    "controls": "Arrows / WASD / Swipe",
+    "yourBest": "Your best",
+    "startGame": "Play",
+    "score": "Score",
+    "best": "Best",
+    "gameOver": "Game Over!",
+    "paused": "Paused",
+    "finalScore": "Final score",
+    "playAgain": "Play again",
+    "resume": "Resume",
+    "keyboardHint": "Arrow keys or WASD • Space = pause"
   }
 }
