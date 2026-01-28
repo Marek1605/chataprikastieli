@@ -89,10 +89,25 @@ export default function Navigation() {
   }, [isMenuOpen]);
 
   const handleLanguageChange = useCallback((newLocale: string) => {
-    const newPath = pathname.replace(`/${locale}`, `/${newLocale}`);
-    router.push(newPath || `/${newLocale}`);
+    // Get path without locale prefix
+    let pathWithoutLocale = pathname;
+    
+    // Remove any existing locale prefix
+    for (const l of locales) {
+      if (pathname === `/${l}` || pathname.startsWith(`/${l}/`)) {
+        pathWithoutLocale = pathname.slice(l.length + 1) || '/';
+        break;
+      }
+    }
+    
+    // Build new path
+    const newPath = newLocale === 'sk' 
+      ? pathWithoutLocale 
+      : `/${newLocale}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}`;
+    
+    router.push(newPath);
     setIsMenuOpen(false);
-  }, [locale, pathname, router]);
+  }, [pathname, router]);
 
   const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
