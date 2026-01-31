@@ -1,11 +1,16 @@
 'use client';
 
 import { AdminProvider } from '@/lib/AdminContext';
+import '../globals.css';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AdminProvider>
-      {children}
-    </AdminProvider>
+    <html lang="sk">
+      <body>
+        <AdminProvider>
+          {children}
+        </AdminProvider>
+      </body>
+    </html>
   );
 }

@@ -1,91 +1,170 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, ElementType } from 'react';
 import { useAdmin } from '@/lib/AdminContext';
 
-interface Props {
-  contentKey: string;
+interface EditableTextProps {
+  textKey: string;
   defaultValue: string;
-  as?: 'h1' | 'h2' | 'h3' | 'p' | 'span' | 'div';
+  as?: ElementType;
   className?: string;
   multiline?: boolean;
+  placeholder?: string;
 }
 
-export default function EditableText({ contentKey, defaultValue, as: Tag = 'span', className = '', multiline = false }: Props) {
-  const { isAdmin, isEditing, content, updateContent } = useAdmin();
-  const [editing, setEditing] = useState(false);
-  const [value, setValue] = useState('');
+export default function EditableText({
+  textKey,
+  defaultValue,
+  as: Component = 'span',
+  className = '',
+  multiline = false,
+  placeholder = 'Klikni pre úpravu...',
+}: EditableTextProps) {
+  const { isAdmin, isEditing, getText, setText } = useAdmin();
+  const [isLocalEditing, setIsLocalEditing] = useState(false);
+  const [localValue, setLocalValue] = useState('');
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
-  const currentValue = content[contentKey] || defaultValue;
+  const currentValue = getText(textKey, defaultValue);
 
   useEffect(() => {
-    setValue(currentValue);
+    setLocalValue(currentValue);
   }, [currentValue]);
 
   useEffect(() => {
-    if (editing && inputRef.current) {
+    if (isLocalEditing && inputRef.current) {
       inputRef.current.focus();
-      inputRef.current.select();
+      if ('select' in inputRef.current) {
+        inputRef.current.select();
+      }
     }
-  }, [editing]);
+  }, [isLocalEditing]);
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
     if (isAdmin && isEditing) {
-      setEditing(true);
+      e.preventDefault();
+      e.stopPropagation();
+      setIsLocalEditing(true);
     }
   };
 
   const handleBlur = () => {
-    setEditing(false);
-    updateContent(contentKey, value);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !multiline) handleBlur();
-    if (e.key === 'Escape') {
-      setValue(currentValue);
-      setEditing(false);
+    setIsLocalEditing(false);
+    if (localValue !== currentValue) {
+      setText(textKey, localValue);
     }
   };
 
-  if (editing) {
-    const inputClass = "bg-yellow-100 border-2 border-yellow-400 rounded px-2 py-1 outline-none w-full " + className;
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !multiline) {
+      e.preventDefault();
+      handleBlur();
+    }
+    if (e.key === 'Escape') {
+      setLocalValue(currentValue);
+      setIsLocalEditing(false);
+    }
+  };
+
+  // Editing mode
+  if (isLocalEditing) {
+    const inputClassName = `
+      bg-yellow-100 border-2 border-yellow-500 rounded-lg px-3 py-2 
+      outline-none w-full text-graphite font-inherit
+      shadow-lg
+    `;
     
     if (multiline) {
       return (
         <textarea
-          ref={inputRef as any}
-          value={value}
-          onChange={e => setValue(e.target.value)}
+          ref={inputRef as React.RefObject<HTMLTextAreaElement>}
+          value={localValue}
+          onChange={e => setLocalValue(e.target.value)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          className={inputClass}
-          rows={3}
+          className={inputClassName + ' min-h-[100px] resize-y'}
+          placeholder={placeholder}
         />
       );
     }
 
     return (
       <input
-        ref={inputRef as any}
+        ref={inputRef as React.RefObject<HTMLInputElement>}
         type="text"
-        value={value}
-        onChange={e => setValue(e.target.value)}
+        value={localValue}
+        onChange={e => setLocalValue(e.target.value)}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        className={inputClass}
+        className={inputClassName}
+        placeholder={placeholder}
       />
     );
   }
 
-  const editableClass = isAdmin && isEditing
-    ? `${className} cursor-pointer hover:bg-yellow-100/50 hover:outline hover:outline-2 hover:outline-yellow-400 hover:outline-dashed rounded transition-all`
+  // Display mode
+  const editableClassName = isAdmin && isEditing
+    ? `${className} cursor-pointer relative
+       hover:bg-yellow-200/50 hover:outline hover:outline-2 
+       hover:outline-yellow-500 hover:outline-dashed 
+       rounded transition-all`
     : className;
 
   return (
-    <Tag className={editableClass} onClick={handleClick} title={isAdmin && isEditing ? 'Klikni pre úpravu' : undefined}>
-      {currentValue}
-    </Tag>
+    <Component 
+      className={editableClassName}
+      onClick={handleClick}
+      title={isAdmin && isEditing ? '✏️ Klikni pre úpravu' : undefined}
+    >
+      {currentValue || defaultValue}
+      {isAdmin && isEditing && (
+        <span className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center text-xs opacity-0 hover:opacity-100 transition-opacity">
+          ✏️
+        </span>
+      )}
+    </Component>
+  );
+}
+
+// Jednoduchý wrapper pre rýchle použitie
+export function EditableHeading({ 
+  textKey, 
+  defaultValue, 
+  level = 2,
+  className = '' 
+}: { 
+  textKey: string; 
+  defaultValue: string; 
+  level?: 1 | 2 | 3 | 4 | 5 | 6;
+  className?: string;
+}) {
+  const Tag = `h${level}` as ElementType;
+  return (
+    <EditableText 
+      textKey={textKey} 
+      defaultValue={defaultValue} 
+      as={Tag} 
+      className={className}
+    />
+  );
+}
+
+export function EditableParagraph({ 
+  textKey, 
+  defaultValue,
+  className = '' 
+}: { 
+  textKey: string; 
+  defaultValue: string;
+  className?: string;
+}) {
+  return (
+    <EditableText 
+      textKey={textKey} 
+      defaultValue={defaultValue} 
+      as="p" 
+      className={className}
+      multiline
+    />
   );
 }
