@@ -120,9 +120,8 @@ function generateStructuredData(locale: string, t: any) {
     },
     geo: {
       '@type': 'GeoCoordinates',
-      // Add actual coordinates
-      latitude: '49.0',
-      longitude: '18.9',
+      latitude: '48.9594',
+      longitude: '18.8775',
     },
     image: `${baseUrl}/assets/hero.jpg`,
     priceRange: '€€',
