@@ -207,7 +207,7 @@ export default function Navigation() {
                   key={l}
                   onClick={() => handleLanguageChange(l)}
                   className={cn(
-                    'px-2.5 py-1.5 text-xs font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-wood focus-visible:ring-inset',
+                    'inline-flex items-center justify-center min-w-[52px] px-2 py-1.5 text-xs font-semibold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-wood focus-visible:ring-inset',
                     isScrolled ? 'text-graphite' : 'text-white',
                     locale === l
                       ? isScrolled
@@ -218,8 +218,8 @@ export default function Navigation() {
                   aria-label={`Prepnúť na ${l.toUpperCase()}`}
                   aria-current={locale === l ? 'true' : undefined}
                 >
-                  <span className="mr-1" aria-hidden="true">{languageFlags[l]}</span>
-                  {l.toUpperCase()}
+                  <span className="w-4 text-center mr-1 flex-shrink-0" aria-hidden="true">{languageFlags[l]}</span>
+                  <span className="w-5 text-center">{l.toUpperCase()}</span>
                 </button>
               ))}
             </div>
@@ -342,22 +342,22 @@ export default function Navigation() {
             {/* Language Selector */}
             <div className="mt-8 pt-6 border-t border-cream-dark">
               <p className="text-sm text-gray-500 mb-4 px-4 font-medium">Jazyk / Language</p>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 {locales.map((l) => (
                   <button
                     key={l}
                     onClick={() => handleLanguageChange(l)}
                     className={cn(
-                      'flex items-center justify-center gap-2 px-4 py-3.5 text-base font-semibold rounded-xl transition-all',
+                      'flex flex-col items-center justify-center py-3 text-sm font-semibold rounded-xl transition-all',
                       'focus:outline-none focus-visible:ring-2 focus-visible:ring-wood',
-                      locale === l 
-                        ? 'bg-wood text-white shadow-md' 
+                      locale === l
+                        ? 'bg-wood text-white shadow-md'
                         : 'bg-cream text-graphite hover:bg-cream-dark active:scale-[0.98]'
                     )}
                     aria-current={locale === l ? 'true' : undefined}
                   >
-                    <span className="text-xl" aria-hidden="true">{languageFlags[l]}</span>
-                    {l.toUpperCase()}
+                    <span className="text-xl mb-1" aria-hidden="true">{languageFlags[l]}</span>
+                    <span>{l.toUpperCase()}</span>
                   </button>
                 ))}
               </div>
