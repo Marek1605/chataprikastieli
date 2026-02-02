@@ -44,7 +44,7 @@ interface AdminContextType {
   importData: (json: string) => boolean;
 }
 
-const ADMIN_PASSWORD = 'chata2024';
+const ADMIN_PASSWORD = 'ChataAdmin2025!';
 const STORAGE_KEY = 'chata_admin_content';
 
 const defaultContent: SiteContent = {

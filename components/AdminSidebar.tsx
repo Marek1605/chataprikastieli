@@ -417,7 +417,7 @@ export default function AdminSidebar() {
                 <div className="bg-white/5 rounded-lg p-3 space-y-2">
                   <div className="flex justify-between text-xs">
                     <span className="text-gray-400">Heslo</span>
-                    <code className="text-gray-300 bg-white/10 px-1.5 py-0.5 rounded text-[10px]">chata2024</code>
+                    <code className="text-gray-300 bg-white/10 px-1.5 py-0.5 rounded text-[10px]">ChataAdmin2025!</code>
                   </div>
                   <div className="flex justify-between text-xs">
                     <span className="text-gray-400">Skratka</span>
