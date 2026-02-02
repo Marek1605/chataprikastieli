@@ -248,7 +248,7 @@ export default function SnakeGame() {
 
       {/* Game board */}
       <div 
-        className="p-4"
+        className="p-4 relative"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
