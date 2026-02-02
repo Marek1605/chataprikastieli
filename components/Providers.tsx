@@ -2,13 +2,13 @@
 
 import { ReactNode } from 'react';
 import { AdminProvider } from '@/lib/AdminContext';
-import AdminToolbar from '@/components/AdminToolbar';
+import AdminSidebar from '@/components/AdminSidebar';
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
     <AdminProvider>
       {children}
-      <AdminToolbar />
+      <AdminSidebar />
     </AdminProvider>
   );
 }

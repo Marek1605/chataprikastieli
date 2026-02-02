@@ -9,7 +9,6 @@ interface EditableTextProps {
   as?: ElementType;
   className?: string;
   multiline?: boolean;
-  placeholder?: string;
 }
 
 export default function EditableText({
@@ -18,153 +17,88 @@ export default function EditableText({
   as: Component = 'span',
   className = '',
   multiline = false,
-  placeholder = 'Klikni pre úpravu...',
 }: EditableTextProps) {
   const { isAdmin, isEditing, getText, setText } = useAdmin();
-  const [isLocalEditing, setIsLocalEditing] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [localValue, setLocalValue] = useState('');
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
   const currentValue = getText(textKey, defaultValue);
 
+  useEffect(() => { setLocalValue(currentValue); }, [currentValue]);
   useEffect(() => {
-    setLocalValue(currentValue);
-  }, [currentValue]);
-
-  useEffect(() => {
-    if (isLocalEditing && inputRef.current) {
+    if (editing && inputRef.current) {
       inputRef.current.focus();
-      if ('select' in inputRef.current) {
-        inputRef.current.select();
-      }
+      if ('select' in inputRef.current) inputRef.current.select();
     }
-  }, [isLocalEditing]);
+  }, [editing]);
 
   const handleClick = (e: React.MouseEvent) => {
     if (isAdmin && isEditing) {
       e.preventDefault();
       e.stopPropagation();
-      setIsLocalEditing(true);
+      setEditing(true);
     }
   };
 
-  const handleBlur = () => {
-    setIsLocalEditing(false);
-    if (localValue !== currentValue) {
-      setText(textKey, localValue);
-    }
+  const save = () => {
+    setEditing(false);
+    if (localValue !== currentValue) setText(textKey, localValue);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !multiline) {
-      e.preventDefault();
-      handleBlur();
-    }
-    if (e.key === 'Escape') {
-      setLocalValue(currentValue);
-      setIsLocalEditing(false);
-    }
+  const cancel = () => {
+    setLocalValue(currentValue);
+    setEditing(false);
   };
 
-  // Editing mode
-  if (isLocalEditing) {
-    const inputClassName = `
-      bg-yellow-100 border-2 border-yellow-500 rounded-lg px-3 py-2 
-      outline-none w-full text-graphite font-inherit
-      shadow-lg
-    `;
+  if (editing) {
+    const cls = "bg-yellow-50 border-2 border-yellow-400 rounded-lg px-3 py-2 outline-none w-full text-graphite shadow-md text-inherit font-inherit";
     
-    if (multiline) {
-      return (
-        <textarea
-          ref={inputRef as React.RefObject<HTMLTextAreaElement>}
-          value={localValue}
-          onChange={e => setLocalValue(e.target.value)}
-          onBlur={handleBlur}
-          onKeyDown={handleKeyDown}
-          className={inputClassName + ' min-h-[100px] resize-y'}
-          placeholder={placeholder}
-        />
-      );
-    }
-
     return (
-      <input
-        ref={inputRef as React.RefObject<HTMLInputElement>}
-        type="text"
-        value={localValue}
-        onChange={e => setLocalValue(e.target.value)}
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-        className={inputClassName}
-        placeholder={placeholder}
-      />
+      <div className="relative inline-block w-full">
+        {multiline ? (
+          <textarea
+            ref={inputRef as React.RefObject<HTMLTextAreaElement>}
+            value={localValue}
+            onChange={e => setLocalValue(e.target.value)}
+            onBlur={save}
+            onKeyDown={e => { if (e.key === 'Escape') cancel(); }}
+            className={cls + ' min-h-[80px] resize-y'}
+          />
+        ) : (
+          <input
+            ref={inputRef as React.RefObject<HTMLInputElement>}
+            type="text"
+            value={localValue}
+            onChange={e => setLocalValue(e.target.value)}
+            onBlur={save}
+            onKeyDown={e => { if (e.key === 'Enter') save(); if (e.key === 'Escape') cancel(); }}
+            className={cls}
+          />
+        )}
+        <div className="absolute -top-6 left-0 flex gap-1">
+          <span className="bg-yellow-400 text-black text-[10px] font-bold px-1.5 py-0.5 rounded">
+            ✏️ {textKey}
+          </span>
+        </div>
+      </div>
     );
   }
 
-  // Display mode
-  const editableClassName = isAdmin && isEditing
-    ? `${className} cursor-pointer relative
-       hover:bg-yellow-200/50 hover:outline hover:outline-2 
-       hover:outline-yellow-500 hover:outline-dashed 
-       rounded transition-all`
-    : className;
+  if (!isAdmin || !isEditing) {
+    return <Component className={className}>{currentValue || defaultValue}</Component>;
+  }
 
   return (
-    <Component 
-      className={editableClassName}
+    <Component
+      className={`${className} cursor-pointer relative inline-block transition-all
+        outline-2 outline-dashed outline-transparent
+        hover:outline-yellow-400 hover:bg-yellow-100/40 
+        hover:rounded-md`}
       onClick={handleClick}
-      title={isAdmin && isEditing ? '✏️ Klikni pre úpravu' : undefined}
+      title="✏️ Klikni pre úpravu"
     >
       {currentValue || defaultValue}
-      {isAdmin && isEditing && (
-        <span className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 rounded-full flex items-center justify-center text-xs opacity-0 hover:opacity-100 transition-opacity">
-          ✏️
-        </span>
-      )}
     </Component>
-  );
-}
-
-// Jednoduchý wrapper pre rýchle použitie
-export function EditableHeading({ 
-  textKey, 
-  defaultValue, 
-  level = 2,
-  className = '' 
-}: { 
-  textKey: string; 
-  defaultValue: string; 
-  level?: 1 | 2 | 3 | 4 | 5 | 6;
-  className?: string;
-}) {
-  const Tag = `h${level}` as ElementType;
-  return (
-    <EditableText 
-      textKey={textKey} 
-      defaultValue={defaultValue} 
-      as={Tag} 
-      className={className}
-    />
-  );
-}
-
-export function EditableParagraph({ 
-  textKey, 
-  defaultValue,
-  className = '' 
-}: { 
-  textKey: string; 
-  defaultValue: string;
-  className?: string;
-}) {
-  return (
-    <EditableText 
-      textKey={textKey} 
-      defaultValue={defaultValue} 
-      as="p" 
-      className={className}
-      multiline
-    />
   );
 }
