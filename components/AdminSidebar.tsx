@@ -92,7 +92,7 @@ export default function AdminSidebar() {
       <>
         <button
           onClick={() => setShowLogin(true)}
-          className="fixed bottom-3 left-3 w-8 h-8 rounded-full opacity-[0.05] hover:opacity-50 transition-all z-50 bg-black/20 flex items-center justify-center text-xs"
+          className="fixed bottom-3 left-3 w-8 h-8 rounded-full opacity-30 hover:opacity-50 transition-all z-50 bg-black/20 flex items-center justify-center text-xs"
           title="Admin (Ctrl+Shift+A)"
         >⚙</button>
 
