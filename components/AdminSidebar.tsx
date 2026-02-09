@@ -475,7 +475,7 @@ function SettingsTab() {
 // ============================================================
 // MAIN SIDEBAR
 // ============================================================
-export default function AdminSidebar() {
+export default function AdminSidebar({ onStateChange }: { onStateChange?: (open: boolean, width: number) => void } = {}) {
   const { isAdmin, isEditing, login, logout, toggleEditing, saveAll, hasUnsavedChanges, isSaving, saveError } = useAdmin();
 
   const [hidden, setHidden] = useState(true);
@@ -485,6 +485,17 @@ export default function AdminSidebar() {
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [saveFlash, setSaveFlash] = useState(false);
+
+  // Notify parent about sidebar state
+  useEffect(() => {
+    if (!isAdmin || hidden) {
+      onStateChange?.(false, 0);
+    } else if (collapsed) {
+      onStateChange?.(true, 56); // w-14 = 56px
+    } else {
+      onStateChange?.(true, 320); // w-80 = 320px
+    }
+  }, [isAdmin, hidden, collapsed, onStateChange]);
 
   // Ctrl+Shift+A
   useEffect(() => {
