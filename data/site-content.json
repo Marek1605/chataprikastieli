@@ -1,0 +1,65 @@
+{
+  "texts": {
+    "hero.title": "Únik do ticha pod horami",
+    "hero.subtitle": "Moderný dizajn, absolútne súkromie a nezabudnuteľné zážitky.",
+    "hero.badge1": "Súkromie",
+    "hero.badge2": "Výhľad",
+    "hero.badge3": "Kľud",
+    "hero.badge4": "Self check-in",
+    "overview.title": "Miesto, kde sa zastaví čas",
+    "overview.text": "Chata pri Kaštieli je ukrytá v malebnom prostredí Turca s výhľadom na Malú Fatru.",
+    "amenities.title": "Čo vás u nás čaká",
+    "gallery.title": "Nahliadnite dovnútra",
+    "pricing.title": "Cenník a dostupnosť",
+    "reviews.title": "Čo hovoria naši hostia",
+    "faq.title": "Časté otázky",
+    "contact.title": "Kontakt a poloha",
+    "footer.text": "© 2025 Chata pri Kaštieli. Všetky práva vyhradené."
+  },
+  "images": {
+    "hero.bg": "/assets/hero-bg.jpg",
+    "overview.img1": "/assets/gallery-1.jpg",
+    "overview.img2": "/assets/gallery-2.jpg"
+  },
+  "gallery": [
+    {"id": "g1", "url": "/assets/gallery-1.jpg", "alt": "Interiér", "category": "interior", "order": 0},
+    {"id": "g2", "url": "/assets/gallery-2.jpg", "alt": "Interiér 2", "category": "interior", "order": 1},
+    {"id": "g3", "url": "/assets/gallery-3.jpg", "alt": "Exteriér", "category": "exterior", "order": 2},
+    {"id": "g4", "url": "/assets/gallery-4.jpg", "alt": "Exteriér 2", "category": "exterior", "order": 3}
+  ],
+  "reviews": [
+    {"id": "r1", "name": "Martin K.", "rating": 5, "text": "Nádherné miesto, úplný pokoj. Určite sa vrátime!", "date": "2024-12", "source": "Airbnb"}
+  ],
+  "faq": [
+    {"id": "f1", "question": "Aký je čas príchodu a odchodu?", "answer": "Check-in je od 15:00, check-out do 10:00.", "order": 0}
+  ],
+  "pricing": [
+    {"id": "p1", "name": "Hlavná sezóna", "dateFrom": "2025-06-15", "dateTo": "2025-09-15", "pricePerNight": 120, "minNights": 2, "color": "#e74c3c"},
+    {"id": "p2", "name": "Mimo sezónu", "dateFrom": "2025-01-01", "dateTo": "2025-06-14", "pricePerNight": 89, "minNights": 1, "color": "#3498db"}
+  ],
+  "contact": {
+    "phone": "+421 900 000 000",
+    "email": "info@chataprikastieli.sk",
+    "address": "Necpaly, okres Martin, Slovensko",
+    "mapUrl": "",
+    "instagram": "",
+    "facebook": "",
+    "airbnb": "",
+    "bookingCom": ""
+  },
+  "seo": {
+    "title": "Chata pri Kaštieli | Luxusné ubytovanie v Turci",
+    "description": "Moderná chata s výhľadom na Malú Fatru.",
+    "keywords": "chata Turiec, ubytovanie Malá Fatra",
+    "ogImage": "/assets/og.jpg"
+  },
+  "settings": {
+    "maxGuests": 6,
+    "checkInTime": "15:00",
+    "checkOutTime": "10:00",
+    "currency": "EUR",
+    "defaultLang": "sk",
+    "maintenanceMode": false,
+    "bookingEnabled": true
+  }
+}
