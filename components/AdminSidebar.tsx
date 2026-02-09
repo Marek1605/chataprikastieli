@@ -475,7 +475,7 @@ function SettingsTab() {
 // ============================================================
 // MAIN SIDEBAR
 // ============================================================
-export default function AdminSidebar({ onStateChange }: { onStateChange?: (open: boolean, width: number) => void } = {}) {
+export default function AdminSidebar({ onStateChange }: { onStateChange?: (open: boolean, width: number) => void }) {
   const { isAdmin, isEditing, login, logout, toggleEditing, saveAll, hasUnsavedChanges, isSaving, saveError } = useAdmin();
 
   const [hidden, setHidden] = useState(true);

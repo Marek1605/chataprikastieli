@@ -1,42 +1,30 @@
 'use client';
 
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState, useCallback } from 'react';
 import { AdminProvider, useAdmin } from '@/lib/AdminContext';
 import AdminSidebar from '@/components/AdminSidebar';
 
 function AdminLayout({ children }: { children: ReactNode }) {
-  const { isAdmin } = useAdmin();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarWidth, setSidebarWidth] = useState(0);
+  const [marginLeft, setMarginLeft] = useState(0);
 
-  // Listen for sidebar state changes via custom events
-  useEffect(() => {
-    const handleSidebarChange = (e: CustomEvent) => {
-      setSidebarOpen(e.detail.open);
-      setSidebarWidth(e.detail.width || 0);
-    };
-
-    window.addEventListener('admin-sidebar-change' as any, handleSidebarChange);
-    return () => window.removeEventListener('admin-sidebar-change' as any, handleSidebarChange);
+  const handleSidebarChange = useCallback((open: boolean, width: number) => {
+    setMarginLeft(open ? width : 0);
   }, []);
 
   return (
     <>
       <div
+        id="main-content"
         style={{
-          marginLeft: sidebarOpen ? sidebarWidth + 'px' : '0px',
-          transition: 'margin-left 0.3s ease',
+          marginLeft: marginLeft > 0 ? `${marginLeft}px` : '0',
+          transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           minHeight: '100vh',
+          width: marginLeft > 0 ? `calc(100% - ${marginLeft}px)` : '100%',
         }}
       >
         {children}
       </div>
-      <AdminSidebar onStateChange={(open, width) => {
-        setSidebarOpen(open);
-        setSidebarWidth(width);
-        // Dispatch event for other components
-        window.dispatchEvent(new CustomEvent('admin-sidebar-change', { detail: { open, width } }));
-      }} />
+      <AdminSidebar onStateChange={handleSidebarChange} />
     </>
   );
 }

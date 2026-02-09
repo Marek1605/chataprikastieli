@@ -10,28 +10,33 @@ import { useAdmin } from '@/lib/AdminContext';
 export default function Gallery() {
   const t = useTranslations('gallery');
   const tLightbox = useTranslations('lightbox');
-  const { isAdmin, isEditing, content, uploadImage, addGalleryImage, removeGalleryImage, updateGalleryImage } = useAdmin();
+  const admin = useAdmin();
 
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [uploading, setUploading] = useState<string | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [replaceTarget, setReplaceTarget] = useState<number | null>(null);
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [targetIndex, setTargetIndex] = useState<number>(-1);
 
-  // Use admin gallery if available, otherwise fall back to config
-  const images = content.gallery && content.gallery.length > 0
-    ? content.gallery.sort((a, b) => a.order - b.order).map(g => ({ src: g.url, alt: g.alt, id: g.id }))
-    : defaultImages.map((img, i) => ({ ...img, id: 'default-' + i }));
+  // Build images list: admin gallery first, then defaults as fallback
+  const adminGallery = admin.content.gallery || [];
+  const hasAdminImages = adminGallery.length > 0;
 
-  const minSwipeDistance = 50;
+  const images = hasAdminImages
+    ? [...adminGallery].sort((a, b) => a.order - b.order).map(g => ({
+        id: g.id, src: g.url, alt: g.alt, category: g.category
+      }))
+    : defaultImages.map((img, i) => ({
+        id: `def-${i}`, src: img.src, alt: img.alt, category: 'interior' as const
+      }));
 
+  // Lightbox
   const openLightbox = useCallback((index: number) => {
-    if (isEditing && isAdmin) return; // Don't open lightbox in edit mode
     setCurrentIndex(index);
     setLightboxOpen(true);
     document.body.style.overflow = 'hidden';
-  }, [isEditing, isAdmin]);
+  }, []);
 
   const closeLightbox = useCallback(() => {
     setLightboxOpen(false);
@@ -39,74 +44,87 @@ export default function Gallery() {
   }, []);
 
   const goToPrev = useCallback(() => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+    setCurrentIndex(p => (p - 1 + images.length) % images.length);
   }, [images.length]);
 
   const goToNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % images.length);
+    setCurrentIndex(p => (p + 1) % images.length);
   }, [images.length]);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const h = (e: KeyboardEvent) => {
       if (!lightboxOpen) return;
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowLeft') goToPrev();
       if (e.key === 'ArrowRight') goToNext();
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
   }, [lightboxOpen, closeLightbox, goToPrev, goToNext]);
 
-  // Handle image replacement via upload
-  const handleImageReplace = async (file: File, index: number) => {
-    setUploading(images[index]?.id || null);
-    try {
-      const url = await uploadImage(file);
-      if (url) {
-        const img = images[index];
-        if (img.id.startsWith('default-')) {
-          // First time editing default images - add to admin gallery
-          addGalleryImage({ url, alt: img.alt, category: 'interior' });
-        } else {
-          updateGalleryImage(img.id, { url });
-        }
-      }
-    } catch (err) {
-      console.error('Upload failed:', err);
-    } finally {
-      setUploading(null);
-      setReplaceTarget(null);
+  // === ADMIN: Click on image to replace ===
+  const onImageClick = (index: number) => {
+    if (admin.isAdmin && admin.isEditing) {
+      // In edit mode: open file picker to replace this image
+      setTargetIndex(index);
+      fileInputRef.current?.click();
+    } else {
+      // Normal mode: open lightbox
+      openLightbox(index);
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // === ADMIN: Handle file selected ===
+  const onFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && replaceTarget !== null) {
-      handleImageReplace(file, replaceTarget);
-    }
     e.target.value = '';
-  };
+    if (!file || targetIndex < 0) return;
 
-  // Handle adding a new image
-  const handleAddNew = async (file: File) => {
-    setUploading('new');
+    const img = images[targetIndex];
+    setUploadingId(img.id);
+
     try {
-      const url = await uploadImage(file);
-      if (url) {
-        addGalleryImage({ url, alt: 'Nový obrázok', category: 'interior' });
+      const url = await admin.uploadImage(file);
+      if (!url) return;
+
+      if (img.id.startsWith('def-')) {
+        // Replacing a default placeholder - add as new admin image
+        admin.addGalleryImage({ url, alt: img.alt || file.name, category: 'interior' });
+      } else {
+        // Replacing existing admin image
+        admin.updateGalleryImage(img.id, { url });
       }
     } catch (err) {
-      console.error('Upload failed:', err);
+      console.error('Upload error:', err);
+      alert('Upload zlyhal: ' + (err instanceof Error ? err.message : 'Neznáma chyba'));
     } finally {
-      setUploading(null);
+      setUploadingId(null);
+      setTargetIndex(-1);
+    }
+  };
+
+  // === ADMIN: Add brand new image ===
+  const onAddNewImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    setUploadingId('new');
+    try {
+      const url = await admin.uploadImage(file);
+      if (url) {
+        admin.addGalleryImage({ url, alt: file.name.replace(/\.[^.]+$/, ''), category: 'interior' });
+      }
+    } catch (err) {
+      console.error('Upload error:', err);
+    } finally {
+      setUploadingId(null);
     }
   };
 
   const gridClasses = [
-    'col-span-2 row-span-2',
-    '', '', '',
-    '', 'col-span-2',
-    '', '', '', '',
+    'col-span-2 row-span-2', '', '', '',
+    '', 'col-span-2', '', '', '', '',
   ];
 
   return (
@@ -115,32 +133,30 @@ export default function Gallery() {
         <header className="text-center mb-10 sm:mb-12 lg:mb-16">
           <span className="section-label">{t('label')}</span>
           <h2 id="gallery-title" className="section-title">{t('title')}</h2>
+          {admin.isAdmin && admin.isEditing && (
+            <p className="mt-2 text-sm text-amber-600 font-medium bg-amber-50 inline-block px-4 py-1 rounded-full">
+              ✏️ Režim editácie — kliknite na obrázok pre jeho zmenu
+            </p>
+          )}
         </header>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 auto-rows-[120px] sm:auto-rows-[160px] md:auto-rows-[180px] lg:auto-rows-[200px]" role="list">
+        {/* Gallery Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 lg:gap-4 auto-rows-[120px] sm:auto-rows-[160px] md:auto-rows-[180px] lg:auto-rows-[200px]">
           {images.map((image, index) => (
-            <article
+            <div
               key={image.id}
               className={cn(
                 'relative rounded-lg sm:rounded-xl overflow-hidden cursor-pointer group',
-                'bg-gradient-to-br from-cream to-cream-dark',
-                gridClasses[index % gridClasses.length]
+                'bg-gradient-to-br from-stone-200 to-stone-300',
+                gridClasses[index % gridClasses.length],
+                admin.isAdmin && admin.isEditing && 'ring-2 ring-amber-400/50 ring-offset-1',
               )}
-              role="listitem"
+              onClick={() => onImageClick(index)}
+              role="button"
+              tabIndex={0}
+              aria-label={admin.isEditing ? `Zmeniť: ${image.alt}` : image.alt}
             >
-              <button
-                className="absolute inset-0 w-full h-full z-10"
-                onClick={() => {
-                  if (isEditing && isAdmin) {
-                    setReplaceTarget(index);
-                    fileRef.current?.click();
-                  } else {
-                    openLightbox(index);
-                  }
-                }}
-                aria-label={isEditing && isAdmin ? `Zmeniť: ${image.alt}` : `Otvoriť: ${image.alt}`}
-              />
-
+              {/* The image */}
               <Image
                 src={image.src}
                 alt={image.alt}
@@ -148,100 +164,117 @@ export default function Gallery() {
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
                 sizes="(max-width: 768px) 50vw, 25vw"
                 loading="lazy"
+                onError={(e) => {
+                  // Hide broken images
+                  (e.target as HTMLImageElement).style.opacity = '0';
+                }}
               />
 
-              {/* Normal hover overlay */}
-              {!isEditing && (
+              {/* Label */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-2 sm:p-3 pointer-events-none">
+                <span className="text-white text-xs sm:text-sm font-medium drop-shadow">{image.alt}</span>
+              </div>
+
+              {/* Normal hover */}
+              {!(admin.isAdmin && admin.isEditing) && (
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 pointer-events-none" />
               )}
 
-              {/* Admin edit overlay */}
-              {isEditing && isAdmin && (
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-200 pointer-events-none flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center gap-1">
-                    <span className="text-white text-2xl">📷</span>
-                    <span className="text-white text-xs font-medium bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm">
-                      {uploading === image.id ? 'Nahrávam...' : 'Klikni pre zmenu'}
+              {/* ADMIN: Edit overlay */}
+              {admin.isAdmin && admin.isEditing && (
+                <div className="absolute inset-0 bg-amber-500/0 group-hover:bg-amber-500/30 transition-all duration-200 pointer-events-none flex items-center justify-center">
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center gap-1.5">
+                    <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg">
+                      <span className="text-2xl">📷</span>
+                    </div>
+                    <span className="text-white text-xs font-bold bg-black/60 px-3 py-1 rounded-full shadow">
+                      Klikni → zmeniť fotku
                     </span>
                   </div>
                 </div>
               )}
 
-              {/* Uploading indicator */}
-              {uploading === image.id && (
-                <div className="absolute inset-0 bg-black/60 flex items-center justify-center pointer-events-none z-20">
-                  <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              {/* Uploading spinner */}
+              {uploadingId === image.id && (
+                <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center z-20 pointer-events-none">
+                  <div className="w-10 h-10 border-3 border-white border-t-transparent rounded-full animate-spin mb-2" />
+                  <span className="text-white text-xs font-medium">Nahrávam...</span>
                 </div>
               )}
 
-              {/* Delete button in edit mode */}
-              {isEditing && isAdmin && !image.id.startsWith('default-') && (
+              {/* ADMIN: Delete button */}
+              {admin.isAdmin && admin.isEditing && !image.id.startsWith('def-') && (
                 <button
-                  className="absolute top-2 right-2 z-20 w-7 h-7 bg-red-500/80 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={(e) => { e.stopPropagation(); removeGalleryImage(image.id); }}
-                  title="Odstrániť obrázok"
-                >
-                  ✕
-                </button>
+                  className="absolute top-2 right-2 z-20 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={(e) => { e.stopPropagation(); admin.removeGalleryImage(image.id); }}
+                  title="Odstrániť"
+                >✕</button>
               )}
-
-              {/* Image label */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/40 to-transparent p-3 pointer-events-none">
-                <span className="text-white text-xs font-medium">{image.alt}</span>
-              </div>
-            </article>
+            </div>
           ))}
 
-          {/* Add new image button (admin only) */}
-          {isEditing && isAdmin && (
-            <article className="relative rounded-lg sm:rounded-xl overflow-hidden border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors flex items-center justify-center cursor-pointer group">
+          {/* ADMIN: Add new image tile */}
+          {admin.isAdmin && admin.isEditing && (
+            <div className="relative rounded-lg sm:rounded-xl border-3 border-dashed border-amber-400 bg-amber-50 hover:bg-amber-100 transition-colors flex items-center justify-center cursor-pointer group min-h-[120px]">
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
-                className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) handleAddNew(file);
-                  e.target.value = '';
-                }}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                onChange={onAddNewImage}
               />
-              <div className="text-center text-gray-400 group-hover:text-gray-600 transition-colors">
-                <span className="text-3xl block mb-1">+</span>
-                <span className="text-xs font-medium">
-                  {uploading === 'new' ? 'Nahrávam...' : 'Pridať fotku'}
-                </span>
+              <div className="text-center text-amber-600 group-hover:text-amber-700 transition-colors pointer-events-none">
+                {uploadingId === 'new' ? (
+                  <>
+                    <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+                    <span className="text-xs font-medium">Nahrávam...</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="text-4xl block mb-2">+</span>
+                    <span className="text-xs font-bold">Pridať novú fotku</span>
+                  </>
+                )}
               </div>
-            </article>
+            </div>
           )}
         </div>
       </div>
 
-      {/* Hidden file input for replacing */}
-      <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleFileChange} />
+      {/* Hidden file input for image replacement */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="hidden"
+        onChange={onFileSelected}
+      />
 
       {/* Lightbox */}
       <div
         className={cn('lightbox', lightboxOpen && 'active')}
         onClick={closeLightbox}
         aria-hidden={!lightboxOpen}
-        role="dialog"
-        aria-modal="true"
       >
-        <button className="absolute top-6 right-6 text-white text-4xl opacity-70 hover:opacity-100 transition-opacity z-10"
-          onClick={closeLightbox} aria-label={tLightbox('close')}>×</button>
-        <button className="absolute left-6 top-1/2 -translate-y-1/2 text-white text-4xl opacity-70 hover:opacity-100 transition-opacity z-10"
-          onClick={(e) => { e.stopPropagation(); goToPrev(); }} aria-label={tLightbox('prev')}>‹</button>
-        <button className="absolute right-6 top-1/2 -translate-y-1/2 text-white text-4xl opacity-70 hover:opacity-100 transition-opacity z-10"
-          onClick={(e) => { e.stopPropagation(); goToNext(); }} aria-label={tLightbox('next')}>›</button>
-        <div className="relative max-w-[95vw] max-h-[85vh]" onClick={(e) => e.stopPropagation()}
+        <button
+          className="absolute top-6 right-6 text-white text-4xl opacity-70 hover:opacity-100 z-10"
+          onClick={closeLightbox}
+        >×</button>
+        <button
+          className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 text-white text-4xl opacity-70 hover:opacity-100 z-10 p-2"
+          onClick={(e) => { e.stopPropagation(); goToPrev(); }}
+        >‹</button>
+        <button
+          className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 text-white text-4xl opacity-70 hover:opacity-100 z-10 p-2"
+          onClick={(e) => { e.stopPropagation(); goToNext(); }}
+        >›</button>
+        <div
+          className="relative max-w-[95vw] max-h-[85vh]"
+          onClick={(e) => e.stopPropagation()}
           onTouchStart={(e) => setTouchStart(e.targetTouches[0].clientX)}
           onTouchEnd={(e) => {
             const end = e.changedTouches[0].clientX;
-            if (touchStart !== null) {
-              const diff = touchStart - end;
-              if (Math.abs(diff) > minSwipeDistance) {
-                diff > 0 ? goToNext() : goToPrev();
-              }
+            if (touchStart !== null && Math.abs(touchStart - end) > 50) {
+              touchStart - end > 0 ? goToNext() : goToPrev();
             }
             setTouchStart(null);
           }}
@@ -258,7 +291,7 @@ export default function Gallery() {
           )}
         </div>
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-          <span className="text-white/90 bg-black/30 px-4 py-2 rounded-full text-sm">
+          <span className="text-white/90 bg-black/40 px-4 py-2 rounded-full text-sm">
             {currentIndex + 1} / {images.length}
           </span>
         </div>
