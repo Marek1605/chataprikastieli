@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-const STORAGE_KEY = 'chata_admin_data_v1';
+const STORAGE_KEY = 'chata_admin_data_v2';
 
 interface GalleryImage { id: string; src: string; alt: string; }
 interface Review { id: string; name: string; text: string; rating: number; date: string; }
@@ -43,7 +43,6 @@ const defaultData: SiteData = {
   faq: [
     { id: '1', question: 'Aký je čas príchodu a odchodu?', answer: 'Check-in od 15:00, check-out do 10:00.' },
     { id: '2', question: 'Je možné priviesť domáce zviera?', answer: 'Áno, po dohode.' },
-    { id: '3', question: 'Je k dispozícii parkovanie?', answer: 'Áno, bezplatné parkovanie pre 2 autá.' },
   ],
   contact: {
     phone: '+421 900 123 456',
@@ -58,7 +57,6 @@ interface AdminContextType {
   data: SiteData;
   isAdmin: boolean;
   setAdmin: (v: boolean) => void;
-  updateData: (newData: Partial<SiteData>) => void;
   updateHero: (hero: Partial<SiteData['hero']>) => void;
   updateGallery: (gallery: GalleryImage[]) => void;
   updatePricing: (pricing: Partial<SiteData['pricing']>) => void;
@@ -75,33 +73,82 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setAdmin] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
+  // LOAD on mount
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) setData({ ...defaultData, ...JSON.parse(saved) });
-      if (sessionStorage.getItem('chata_admin') === 'true') setAdmin(true);
-    } catch (e) { console.error(e); }
+      console.log('LOADING from localStorage:', saved ? 'found' : 'not found');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setData({ ...defaultData, ...parsed });
+        console.log('LOADED data:', parsed);
+      }
+      if (sessionStorage.getItem('chata_admin') === 'true') {
+        setAdmin(true);
+      }
+    } catch (e) {
+      console.error('Load error:', e);
+    }
     setLoaded(true);
   }, []);
 
-  const save = (newData: SiteData) => {
+  // SAVE function
+  const saveData = (newData: SiteData) => {
     setData(newData);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(newData)); } catch (e) { console.error(e); }
+    try {
+      const json = JSON.stringify(newData);
+      localStorage.setItem(STORAGE_KEY, json);
+      console.log('SAVED to localStorage, gallery count:', newData.gallery.length);
+    } catch (e) {
+      console.error('Save error:', e);
+      alert('Chyba pri ukladaní! ' + e);
+    }
   };
 
-  const updateData = (partial: Partial<SiteData>) => save({ ...data, ...partial });
-  const updateHero = (hero: Partial<SiteData['hero']>) => save({ ...data, hero: { ...data.hero, ...hero } });
-  const updateGallery = (gallery: GalleryImage[]) => save({ ...data, gallery });
-  const updatePricing = (pricing: Partial<SiteData['pricing']>) => save({ ...data, pricing: { ...data.pricing, ...pricing } });
-  const updateReviews = (reviews: Review[]) => save({ ...data, reviews });
-  const updateFaq = (faq: FAQ[]) => save({ ...data, faq });
-  const updateContact = (contact: Partial<SiteData['contact']>) => save({ ...data, contact: { ...data.contact, ...contact } });
-  const resetAll = () => { localStorage.removeItem(STORAGE_KEY); setData(defaultData); };
+  const updateHero = (hero: Partial<SiteData['hero']>) => {
+    const newData = { ...data, hero: { ...data.hero, ...hero } };
+    saveData(newData);
+  };
+
+  const updateGallery = (gallery: GalleryImage[]) => {
+    const newData = { ...data, gallery };
+    saveData(newData);
+  };
+
+  const updatePricing = (pricing: Partial<SiteData['pricing']>) => {
+    const newData = { ...data, pricing: { ...data.pricing, ...pricing } };
+    saveData(newData);
+  };
+
+  const updateReviews = (reviews: Review[]) => {
+    const newData = { ...data, reviews };
+    saveData(newData);
+  };
+
+  const updateFaq = (faq: FAQ[]) => {
+    const newData = { ...data, faq };
+    saveData(newData);
+  };
+
+  const updateContact = (contact: Partial<SiteData['contact']>) => {
+    const newData = { ...data, contact: { ...data.contact, ...contact } };
+    saveData(newData);
+  };
+
+  const resetAll = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setData(defaultData);
+    console.log('RESET to defaults');
+  };
 
   if (!loaded) return null;
 
   return (
-    <AdminContext.Provider value={{ data, isAdmin, setAdmin, updateData, updateHero, updateGallery, updatePricing, updateReviews, updateFaq, updateContact, resetAll }}>
+    <AdminContext.Provider value={{ 
+      data, isAdmin, setAdmin, 
+      updateHero, updateGallery, updatePricing, 
+      updateReviews, updateFaq, updateContact, resetAll 
+    }}>
       {children}
     </AdminContext.Provider>
   );
