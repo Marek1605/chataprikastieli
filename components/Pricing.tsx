@@ -7,9 +7,9 @@ export default function Pricing() {
   const { data } = useAdmin();
 
   const packages = [
-    { key: 'weekend', icon: '🌙', name: t('weekend.name'), desc: t('weekend.desc'), ...data.pricing.weekend },
+    { key: 'weekend', icon: '🌙', name: t('weekend.name'), desc: t('weekend.desc'), ...data.pricing.weekend, popular: false },
     { key: 'reset', icon: '⭐', name: t('reset.name'), desc: t('reset.desc'), ...data.pricing.reset, popular: true },
-    { key: 'week', icon: '📅', name: t('week.name'), desc: t('week.desc'), ...data.pricing.week },
+    { key: 'week', icon: '📅', name: t('week.name'), desc: t('week.desc'), ...data.pricing.week, popular: false },
   ];
 
   const scrollToBooking = (e: React.MouseEvent) => { e.preventDefault(); document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' }); };
