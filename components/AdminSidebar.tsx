@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useAdmin } from '@/lib/AdminContext';
 
 type Tab = 'hero' | 'gallery' | 'pricing' | 'reviews' | 'faq' | 'contact' | 'settings';
@@ -11,7 +11,6 @@ export default function AdminSidebar() {
   const [pw, setPw] = useState('');
   const [tab, setTab] = useState<Tab>('hero');
   const [status, setStatus] = useState('');
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const flash = (m: string) => { setStatus(m); setTimeout(() => setStatus(''), 2000); };
 
@@ -30,22 +29,63 @@ export default function AdminSidebar() {
     setShowPanel(false);
   };
 
-  const uploadImage = (callback: (base64: string) => void) => {
+  // KOMPRIMÁCIA OBRÁZKA - zmenší veľkosť pre localStorage
+  const compressImage = (file: File, maxWidth: number = 800, quality: number = 0.7): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Zmenši ak je väčší než maxWidth
+          if (width > maxWidth) {
+            height = (height * maxWidth) / width;
+            width = maxWidth;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          // Komprimuj ako JPEG
+          const compressed = canvas.toDataURL('image/jpeg', quality);
+          console.log(`Compressed: ${(file.size/1024).toFixed(0)}KB -> ${(compressed.length/1024).toFixed(0)}KB`);
+          resolve(compressed);
+        };
+        img.onerror = reject;
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const uploadImage = async (callback: (base64: string) => void) => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
-    input.onchange = (e: any) => {
+    input.onchange = async (e: any) => {
       const file = e.target.files?.[0];
       if (!file) return;
-      if (file.size > 5 * 1024 * 1024) { alert('Max 5MB!'); return; }
-      const reader = new FileReader();
-      reader.onload = (ev) => { if (ev.target?.result) callback(ev.target.result as string); };
-      reader.readAsDataURL(file);
+      
+      flash('⏳ Komprimujem...');
+      try {
+        const compressed = await compressImage(file, 800, 0.6);
+        callback(compressed);
+        flash('✅ Uložené!');
+      } catch (err) {
+        console.error(err);
+        flash('❌ Chyba!');
+      }
     };
     input.click();
   };
 
-  // LOGIN BUTTON
   if (!isAdmin) {
     return (
       <>
@@ -63,7 +103,6 @@ export default function AdminSidebar() {
     );
   }
 
-  // ADMIN BAR
   return (
     <>
       <div className="fixed top-0 left-0 right-0 z-[400] bg-gradient-to-r from-green-600 to-green-700 text-white p-3 flex justify-between items-center shadow-lg">
@@ -77,7 +116,6 @@ export default function AdminSidebar() {
         </div>
       </div>
 
-      {/* PANEL */}
       {showPanel && (
         <div className="fixed inset-0 bg-black/50 z-[450]" onClick={() => setShowPanel(false)}>
           <div className="fixed top-0 right-0 h-full w-full max-w-lg bg-white shadow-2xl overflow-y-auto" onClick={e => e.stopPropagation()}>
@@ -86,7 +124,6 @@ export default function AdminSidebar() {
               <button onClick={() => setShowPanel(false)} className="text-2xl hover:text-gray-600">✕</button>
             </div>
 
-            {/* TABS */}
             <div className="flex flex-wrap gap-1 p-3 border-b bg-gray-50">
               {[
                 { id: 'hero', icon: '🏠', label: 'Hero' },
@@ -104,7 +141,6 @@ export default function AdminSidebar() {
             </div>
 
             <div className="p-4 space-y-4">
-              {/* HERO */}
               {tab === 'hero' && (
                 <>
                   <h3 className="font-bold text-lg">🏠 Hero sekcia</h3>
@@ -119,20 +155,20 @@ export default function AdminSidebar() {
                   <div>
                     <label className="block text-sm font-medium mb-1">Pozadie</label>
                     <div className="flex gap-2">
-                      <input value={data.hero.backgroundImage} onChange={e => { updateHero({ backgroundImage: e.target.value }); flash('✅'); }} className="flex-1 p-3 border rounded-lg" placeholder="/assets/hero.jpg" />
-                      <button onClick={() => uploadImage(src => { updateHero({ backgroundImage: src }); flash('✅'); })} className="px-4 py-2 bg-green-500 text-white rounded-lg">📁</button>
+                      <input value={data.hero.backgroundImage} onChange={e => { updateHero({ backgroundImage: e.target.value }); flash('✅'); }} className="flex-1 p-3 border rounded-lg" />
+                      <button onClick={() => uploadImage(src => updateHero({ backgroundImage: src }))} className="px-4 py-2 bg-green-500 text-white rounded-lg">📁</button>
                     </div>
                   </div>
                 </>
               )}
 
-              {/* GALLERY */}
               {tab === 'gallery' && (
                 <>
                   <div className="flex justify-between items-center">
                     <h3 className="font-bold text-lg">🖼️ Galéria ({data.gallery.length})</h3>
-                    <button onClick={() => uploadImage(src => { updateGallery([...data.gallery, { id: Date.now().toString(), src, alt: 'Nový' }]); flash('✅'); })} className="px-4 py-2 bg-green-500 text-white rounded-lg font-bold">➕ Pridať</button>
+                    <button onClick={() => uploadImage(src => { updateGallery([...data.gallery, { id: Date.now().toString(), src, alt: 'Nový' }]); })} className="px-4 py-2 bg-green-500 text-white rounded-lg font-bold">➕ Pridať</button>
                   </div>
+                  <p className="text-sm text-gray-500">Obrázky sú automaticky komprimované pre úsporu miesta.</p>
                   <div className="grid grid-cols-3 gap-2">
                     {data.gallery.map((img, i) => (
                       <div key={img.id} className="relative group">
@@ -148,7 +184,6 @@ export default function AdminSidebar() {
                 </>
               )}
 
-              {/* PRICING */}
               {tab === 'pricing' && (
                 <>
                   <h3 className="font-bold text-lg">💰 Cenník</h3>
@@ -170,84 +205,61 @@ export default function AdminSidebar() {
                 </>
               )}
 
-              {/* REVIEWS */}
               {tab === 'reviews' && (
                 <>
                   <div className="flex justify-between items-center">
                     <h3 className="font-bold text-lg">⭐ Recenzie ({data.reviews.length})</h3>
-                    <button onClick={() => { updateReviews([...data.reviews, { id: Date.now().toString(), name: 'Nový', text: 'Text recenzie', rating: 5, date: new Date().toISOString().slice(0,7) }]); flash('✅'); }} className="px-4 py-2 bg-green-500 text-white rounded-lg font-bold">➕</button>
+                    <button onClick={() => { updateReviews([...data.reviews, { id: Date.now().toString(), name: 'Nový', text: 'Text', rating: 5, date: new Date().toISOString().slice(0,7) }]); flash('✅'); }} className="px-4 py-2 bg-green-500 text-white rounded-lg font-bold">➕</button>
                   </div>
                   {data.reviews.map((r, i) => (
                     <div key={r.id} className="p-3 bg-gray-50 rounded-lg space-y-2">
                       <div className="flex gap-2">
-                        <input value={r.name} onChange={e => { const rev = [...data.reviews]; rev[i].name = e.target.value; updateReviews(rev); flash('✅'); }} className="flex-1 p-2 border rounded" placeholder="Meno" />
-                        <select value={r.rating} onChange={e => { const rev = [...data.reviews]; rev[i].rating = +e.target.value; updateReviews(rev); flash('✅'); }} className="p-2 border rounded">
+                        <input value={r.name} onChange={e => { const rev = [...data.reviews]; rev[i].name = e.target.value; updateReviews(rev); }} className="flex-1 p-2 border rounded" placeholder="Meno" />
+                        <select value={r.rating} onChange={e => { const rev = [...data.reviews]; rev[i].rating = +e.target.value; updateReviews(rev); }} className="p-2 border rounded">
                           {[5,4,3,2,1].map(n => <option key={n} value={n}>{n}⭐</option>)}
                         </select>
                         <button onClick={() => { updateReviews(data.reviews.filter(x => x.id !== r.id)); flash('✅'); }} className="px-3 bg-red-500 text-white rounded">✕</button>
                       </div>
-                      <textarea value={r.text} onChange={e => { const rev = [...data.reviews]; rev[i].text = e.target.value; updateReviews(rev); flash('✅'); }} className="w-full p-2 border rounded" rows={2} />
+                      <textarea value={r.text} onChange={e => { const rev = [...data.reviews]; rev[i].text = e.target.value; updateReviews(rev); }} className="w-full p-2 border rounded" rows={2} />
                     </div>
                   ))}
                 </>
               )}
 
-              {/* FAQ */}
               {tab === 'faq' && (
                 <>
                   <div className="flex justify-between items-center">
                     <h3 className="font-bold text-lg">❓ FAQ ({data.faq.length})</h3>
-                    <button onClick={() => { updateFaq([...data.faq, { id: Date.now().toString(), question: 'Nová otázka?', answer: 'Odpoveď...' }]); flash('✅'); }} className="px-4 py-2 bg-green-500 text-white rounded-lg font-bold">➕</button>
+                    <button onClick={() => { updateFaq([...data.faq, { id: Date.now().toString(), question: 'Otázka?', answer: 'Odpoveď' }]); flash('✅'); }} className="px-4 py-2 bg-green-500 text-white rounded-lg font-bold">➕</button>
                   </div>
                   {data.faq.map((f, i) => (
                     <div key={f.id} className="p-3 bg-gray-50 rounded-lg space-y-2">
                       <div className="flex gap-2">
-                        <input value={f.question} onChange={e => { const faq = [...data.faq]; faq[i].question = e.target.value; updateFaq(faq); flash('✅'); }} className="flex-1 p-2 border rounded" placeholder="Otázka" />
+                        <input value={f.question} onChange={e => { const faq = [...data.faq]; faq[i].question = e.target.value; updateFaq(faq); }} className="flex-1 p-2 border rounded" />
                         <button onClick={() => { updateFaq(data.faq.filter(x => x.id !== f.id)); flash('✅'); }} className="px-3 bg-red-500 text-white rounded">✕</button>
                       </div>
-                      <textarea value={f.answer} onChange={e => { const faq = [...data.faq]; faq[i].answer = e.target.value; updateFaq(faq); flash('✅'); }} className="w-full p-2 border rounded" rows={2} placeholder="Odpoveď" />
+                      <textarea value={f.answer} onChange={e => { const faq = [...data.faq]; faq[i].answer = e.target.value; updateFaq(faq); }} className="w-full p-2 border rounded" rows={2} />
                     </div>
                   ))}
                 </>
               )}
 
-              {/* CONTACT */}
               {tab === 'contact' && (
                 <>
                   <h3 className="font-bold text-lg">📞 Kontakt</h3>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Telefón</label>
-                    <input value={data.contact.phone} onChange={e => { updateContact({ phone: e.target.value }); flash('✅'); }} className="w-full p-3 border rounded-lg" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Email</label>
-                    <input value={data.contact.email} onChange={e => { updateContact({ email: e.target.value }); flash('✅'); }} className="w-full p-3 border rounded-lg" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Adresa</label>
-                    <input value={data.contact.address} onChange={e => { updateContact({ address: e.target.value }); flash('✅'); }} className="w-full p-3 border rounded-lg" />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Check-in</label>
-                      <input value={data.contact.checkIn} onChange={e => { updateContact({ checkIn: e.target.value }); flash('✅'); }} className="w-full p-3 border rounded-lg" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-1">Check-out</label>
-                      <input value={data.contact.checkOut} onChange={e => { updateContact({ checkOut: e.target.value }); flash('✅'); }} className="w-full p-3 border rounded-lg" />
-                    </div>
-                  </div>
+                  <div><label className="block text-sm font-medium mb-1">Telefón</label><input value={data.contact.phone} onChange={e => { updateContact({ phone: e.target.value }); flash('✅'); }} className="w-full p-3 border rounded-lg" /></div>
+                  <div><label className="block text-sm font-medium mb-1">Email</label><input value={data.contact.email} onChange={e => { updateContact({ email: e.target.value }); flash('✅'); }} className="w-full p-3 border rounded-lg" /></div>
+                  <div><label className="block text-sm font-medium mb-1">Adresa</label><input value={data.contact.address} onChange={e => { updateContact({ address: e.target.value }); flash('✅'); }} className="w-full p-3 border rounded-lg" /></div>
                 </>
               )}
 
-              {/* SETTINGS */}
               {tab === 'settings' && (
                 <>
                   <h3 className="font-bold text-lg">⚙️ Nastavenia</h3>
-                  <button onClick={() => { if(confirm('Resetovať všetko?')) { resetAll(); flash('✅ Reset!'); }}} className="w-full p-3 bg-red-500 text-white rounded-lg font-bold">🗑️ Resetovať na predvolené</button>
-                  <div className="p-3 bg-gray-100 rounded-lg text-sm">
-                    <p><strong>Heslo:</strong> ChataAdmin2025!</p>
-                    <p className="mt-2 text-gray-600">Všetky zmeny sa ukladajú automaticky do prehliadača.</p>
+                  <button onClick={() => { if(confirm('Resetovať?')) { resetAll(); flash('✅'); }}} className="w-full p-3 bg-red-500 text-white rounded-lg font-bold">🗑️ Resetovať všetko</button>
+                  <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+                    <p className="font-bold text-yellow-800">⚠️ Limit úložiska</p>
+                    <p className="text-yellow-700">Obrázky sú komprimované na max 800px. Ak stále nestačí miesto, zmaž staré obrázky.</p>
                   </div>
                 </>
               )}
