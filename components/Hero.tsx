@@ -8,20 +8,10 @@ export default function Hero() {
   const t = useTranslations('hero');
   const { data } = useAdmin();
   const [isLoaded, setIsLoaded] = useState(false);
-
   useEffect(() => { setIsLoaded(true); }, []);
 
-  const title = data.hero.title || t('title');
-  const subtitle = data.hero.subtitle || t('subtitle');
-  const bgImage = data.hero.backgroundImage || '/assets/hero.jpg';
-  const isBase64 = bgImage.startsWith('data:');
-
-  const badges = [
-    { icon: '🔒', text: t('badge1') },
-    { icon: '🏔️', text: t('badge2') },
-    { icon: '🤫', text: t('badge3') },
-    { icon: '🔑', text: t('badge4') },
-  ];
+  const { title, subtitle, backgroundImage, badges } = data.hero;
+  const isBase64 = backgroundImage.startsWith('data:');
 
   const scrollTo = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault();
@@ -32,11 +22,7 @@ export default function Hero() {
     <section id="hero" className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-wood/70 via-wood-dark/80 to-graphite/90 z-10" />
-        {isBase64 ? (
-          <img src={bgImage} alt="Chata" className="absolute inset-0 w-full h-full object-cover" />
-        ) : (
-          <Image src={bgImage} alt="Chata pri Kaštieli" fill priority className="object-cover" sizes="100vw" quality={85} />
-        )}
+        {isBase64 ? <img src={backgroundImage} alt="Chata" className="absolute inset-0 w-full h-full object-cover" /> : <Image src={backgroundImage} alt="Chata" fill priority className="object-cover" sizes="100vw" quality={85} />}
       </div>
       <div className={`relative z-10 text-center px-4 sm:px-6 max-w-4xl mx-auto pt-20 pb-24 transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-normal text-white mb-4 sm:mb-6 text-shadow-lg leading-tight">{title}</h1>

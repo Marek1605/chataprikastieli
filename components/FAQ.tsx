@@ -1,57 +1,29 @@
 'use client';
-
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { faqItems } from '@/lib/config';
-import { cn } from '@/lib/utils';
+import { useAdmin } from '@/lib/AdminContext';
 
 export default function FAQ() {
   const t = useTranslations('faq');
-  const [openId, setOpenId] = useState<string | null>(null);
-
-  const toggle = (id: string) => {
-    setOpenId(openId === id ? null : id);
-  };
+  const { data } = useAdmin();
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const faqs = data.faq;
+  if (!faqs || faqs.length === 0) return null;
 
   return (
-    <section id="faq" className="py-20 bg-white">
-      <div className="container-custom max-w-3xl">
-        <div className="text-center mb-16">
-          <span className="section-label">{t('label')}</span>
-          <h2 className="section-title">{t('title')}</h2>
-        </div>
-
-        <div className="space-y-4">
-          {faqItems.map((item) => {
-            const isOpen = openId === item.id;
-            return (
-              <div
-                key={item.id}
-                className={cn(
-                  'faq-item border border-cream-dark rounded-xl overflow-hidden transition-all',
-                  isOpen && 'active bg-cream'
-                )}
-              >
-                <button
-                  onClick={() => toggle(item.id)}
-                  className="w-full flex items-center justify-between p-6 text-left"
-                  aria-expanded={isOpen}
-                >
-                  <span className="font-medium pr-4">
-                    {t(item.questionKey.split('.')[1])}
-                  </span>
-                  <span className="faq-icon text-2xl text-wood transition-transform duration-300 flex-shrink-0">
-                    +
-                  </span>
-                </button>
-                <div className="faq-answer">
-                  <div className="px-6 pb-6 text-gray-600">
-                    {t(item.answerKey.split('.')[1])}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+    <section id="faq" className="py-16 sm:py-20 lg:py-24 bg-cream">
+      <div className="container-custom">
+        <header className="text-center mb-12"><span className="section-label">{t('label')}</span><h2 className="section-title">{t('title')}</h2></header>
+        <div className="max-w-3xl mx-auto space-y-4">
+          {faqs.map((faq, i) => (
+            <div key={faq.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <button onClick={() => setOpenIndex(openIndex === i ? null : i)} className="w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors">
+                <span className="font-medium text-graphite">{faq.question}</span>
+                <span className={`text-2xl transition-transform ${openIndex === i ? 'rotate-45' : ''}`}>+</span>
+              </button>
+              {openIndex === i && <div className="px-6 pb-4 text-gray-600">{faq.answer}</div>}
+            </div>
+          ))}
         </div>
       </div>
     </section>

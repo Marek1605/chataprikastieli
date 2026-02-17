@@ -1,59 +1,40 @@
 'use client';
-
 import { useTranslations } from 'next-intl';
-import { pricingPackages, pricingConfig } from '@/lib/config';
+import { useAdmin } from '@/lib/AdminContext';
 
 export default function Pricing() {
   const t = useTranslations('pricing');
+  const { data } = useAdmin();
+
+  const packages = [
+    { key: 'weekend', icon: '🌙', name: t('weekend.name'), desc: t('weekend.desc'), ...data.pricing.weekend },
+    { key: 'reset', icon: '⭐', name: t('reset.name'), desc: t('reset.desc'), ...data.pricing.reset, popular: true },
+    { key: 'week', icon: '📅', name: t('week.name'), desc: t('week.desc'), ...data.pricing.week },
+  ];
+
+  const scrollToBooking = (e: React.MouseEvent) => { e.preventDefault(); document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' }); };
 
   return (
-    <section id="pricing" className="py-20 bg-white">
+    <section id="pricing" className="py-16 sm:py-20 lg:py-24 bg-cream">
       <div className="container-custom">
-        <div className="text-center mb-16">
-          <span className="section-label">{t('label')}</span>
-          <h2 className="section-title">{t('title')}</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {pricingPackages.map((pkg) => (
-            <div
-              key={pkg.id}
-              className={`relative bg-cream rounded-2xl p-8 text-center transition-all hover:-translate-y-2 hover:shadow-xl ${
-                pkg.popular ? 'ring-2 ring-wood scale-105' : ''
-              }`}
-            >
-              {pkg.popular && (
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-wood text-white text-xs font-semibold px-4 py-1 rounded-full">
-                  {t('popular')}
-                </span>
-              )}
-              <h3 className="font-display text-2xl mb-2">{t(pkg.nameKey.split('.')[1])}</h3>
-              <p className="text-gray-500 mb-6">{t(pkg.durationKey.split('.')[1])}</p>
-              <div className="mb-6">
-                <span className="text-sm text-gray-500">{t('from')}</span>
-                <span className="text-4xl font-display ml-2">{pkg.price}</span>
-                <span className="text-xl">{pricingConfig.currency}</span>
+        <header className="text-center mb-12"><span className="section-label">{t('label')}</span><h2 className="section-title">{t('title')}</h2></header>
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {packages.map((pkg) => (
+            <div key={pkg.key} className={`bg-white rounded-2xl p-6 shadow-sm relative ${pkg.popular ? 'ring-2 ring-wood' : ''}`}>
+              {pkg.popular && <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-wood text-white text-xs px-3 py-1 rounded-full">{t('popular')}</span>}
+              <div className="text-center mb-6">
+                <span className="text-4xl mb-2 block">{pkg.icon}</span>
+                <h3 className="text-xl font-bold text-graphite">{pkg.name}</h3>
+                <p className="text-gray-500 text-sm">{pkg.desc}</p>
               </div>
-              <ul className="text-left space-y-3 mb-8">
-                {pkg.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-3 text-gray-600">
-                    <span className="text-wood">✓</span>
-                    {t(feature.split('.')[1])}
-                  </li>
-                ))}
-              </ul>
-              <a
-                href="#booking"
-                className={`btn w-full ${pkg.popular ? 'btn-primary' : 'btn-outline'}`}
-                data-nights={pkg.nights}
-              >
-                {t('cta')}
-              </a>
+              <div className="text-center mb-6">
+                <span className="text-4xl font-bold text-graphite">{pkg.price}€</span>
+                <span className="text-gray-500">/ {pkg.nights} {pkg.nights === 1 ? 'noc' : pkg.nights < 5 ? 'noci' : 'nocí'}</span>
+              </div>
+              <button onClick={scrollToBooking} className={`w-full py-3 rounded-xl font-semibold transition-colors ${pkg.popular ? 'bg-wood text-white hover:bg-wood-dark' : 'bg-gray-100 text-graphite hover:bg-gray-200'}`}>{t('cta')}</button>
             </div>
           ))}
         </div>
-
-        <p className="text-center text-gray-500 text-sm mt-8">{t('note')}</p>
       </div>
     </section>
   );
