@@ -1,19 +1,18 @@
 'use client';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useAdmin } from '@/lib/AdminContext';
 
 type Tab = 'hero' | 'overview' | 'gallery' | 'amenities' | 'atmosphere' | 'pricing' | 'booking' | 'surroundings' | 'reviews' | 'faq' | 'contact' | 'footer' | 'nav' | 'settings';
 
 export default function AdminSidebar() {
-  const { data, isAdmin, setAdmin, updateSection, updateFull, resetAll } = useAdmin();
+  const { data, isAdmin, setAdmin, updateSection, resetAll } = useAdmin();
   const [showLogin, setShowLogin] = useState(false);
   const [showPanel, setShowPanel] = useState(false);
   const [pw, setPw] = useState('');
   const [tab, setTab] = useState<Tab>('hero');
   const [status, setStatus] = useState('');
 
-  const flash = (m: string) => { setStatus(m); setTimeout(() => setStatus(''), 1500); };
-  const ok = () => flash('✅');
+  const flash = useCallback((m: string) => { setStatus(m); setTimeout(() => setStatus(''), 1500); }, []);
 
   const login = () => {
     if (pw === 'ChataAdmin2025!') {
@@ -48,7 +47,7 @@ export default function AdminSidebar() {
     i.type = 'file'; i.accept = 'image/*';
     i.onchange = async (e: any) => {
       const f = e.target.files?.[0]; if (!f) return;
-      flash('⏳'); cb(await compress(f)); ok();
+      flash('⏳'); cb(await compress(f)); flash('✅');
     };
     i.click();
   };
@@ -85,28 +84,11 @@ export default function AdminSidebar() {
     { id: 'settings', icon: '⚙️', label: 'Reset' },
   ];
 
-  const Input = ({ label, value, onChange, textarea, rows = 2 }: { label: string; value: string; onChange: (v: string) => void; textarea?: boolean; rows?: number }) => (
-    <div className="mb-3">
-      <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
-      {textarea ? <textarea value={value} onChange={e => { onChange(e.target.value); ok(); }} className="w-full p-2 border rounded text-sm" rows={rows} />
-        : <input value={value} onChange={e => { onChange(e.target.value); ok(); }} className="w-full p-2 border rounded text-sm" />}
-    </div>
-  );
-
-  const Num = ({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) => (
-    <div className="mb-3">
-      <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
-      <input type="number" value={value} onChange={e => { onChange(+e.target.value); ok(); }} className="w-full p-2 border rounded text-sm" />
-    </div>
-  );
-
-  const ImgBtn = ({ label, onClick }: { label: string; onClick: () => void }) => (
-    <button onClick={onClick} className="w-full p-2 bg-amber-500 text-white rounded text-sm mb-3">📁 {label}</button>
-  );
-
-  const DelBtn = ({ onClick }: { onClick: () => void }) => (
-    <button onClick={() => { onClick(); ok(); }} className="px-2 py-1 bg-red-500 text-white rounded text-xs">✕</button>
-  );
+  // Styling classes
+  const inputClass = "w-full p-2 border rounded text-sm";
+  const labelClass = "block text-xs font-medium text-gray-600 mb-1";
+  const btnClass = "w-full p-2 bg-amber-500 text-white rounded text-sm mb-3";
+  const delBtnClass = "px-2 py-1 bg-red-500 text-white rounded text-xs";
 
   return (
     <>
@@ -141,21 +123,21 @@ export default function AdminSidebar() {
               
               {/* HERO */}
               {tab === 'hero' && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <h3 className="font-bold border-b pb-2">🏠 Hero sekcia</h3>
-                  <Input label="Titulok" value={data.hero.title} onChange={v => updateSection('hero', { title: v })} />
-                  <Input label="Podtitulok" value={data.hero.subtitle} onChange={v => updateSection('hero', { subtitle: v })} textarea rows={3} />
-                  <Input label="Rating" value={data.hero.rating} onChange={v => updateSection('hero', { rating: v })} />
-                  <Input label="Rating text" value={data.hero.ratingText} onChange={v => updateSection('hero', { ratingText: v })} />
-                  <Input label="Tlačidlo 1" value={data.hero.cta1} onChange={v => updateSection('hero', { cta1: v })} />
-                  <Input label="Tlačidlo 2" value={data.hero.cta2} onChange={v => updateSection('hero', { cta2: v })} />
-                  <ImgBtn label="Pozadie" onClick={() => upload(src => updateSection('hero', { backgroundImage: src }))} />
-                  <p className="text-xs text-gray-500 font-medium mt-4">Badges (štítky):</p>
+                  <div><label className={labelClass}>Titulok</label><input className={inputClass} value={data.hero.title} onChange={e => updateSection('hero', { title: e.target.value })} /></div>
+                  <div><label className={labelClass}>Podtitulok</label><textarea className={inputClass} rows={3} value={data.hero.subtitle} onChange={e => updateSection('hero', { subtitle: e.target.value })} /></div>
+                  <div><label className={labelClass}>Rating</label><input className={inputClass} value={data.hero.rating} onChange={e => updateSection('hero', { rating: e.target.value })} /></div>
+                  <div><label className={labelClass}>Rating text</label><input className={inputClass} value={data.hero.ratingText} onChange={e => updateSection('hero', { ratingText: e.target.value })} /></div>
+                  <div><label className={labelClass}>Tlačidlo 1</label><input className={inputClass} value={data.hero.cta1} onChange={e => updateSection('hero', { cta1: e.target.value })} /></div>
+                  <div><label className={labelClass}>Tlačidlo 2</label><input className={inputClass} value={data.hero.cta2} onChange={e => updateSection('hero', { cta2: e.target.value })} /></div>
+                  <button className={btnClass} onClick={() => upload(src => updateSection('hero', { backgroundImage: src }))}>📁 Pozadie</button>
+                  <p className="text-xs text-gray-500 font-medium">Badges (štítky):</p>
                   {data.hero.badges.map((b, i) => (
                     <div key={i} className="flex gap-2 items-center">
-                      <input value={b.icon} onChange={e => { const badges = [...data.hero.badges]; badges[i].icon = e.target.value; updateSection('hero', { badges }); }} className="w-12 p-1 border rounded text-center" />
-                      <input value={b.text} onChange={e => { const badges = [...data.hero.badges]; badges[i].text = e.target.value; updateSection('hero', { badges }); }} className="flex-1 p-1 border rounded" />
-                      <DelBtn onClick={() => updateSection('hero', { badges: data.hero.badges.filter((_, idx) => idx !== i) })} />
+                      <input className="w-12 p-1 border rounded text-center" value={b.icon} onChange={e => { const badges = [...data.hero.badges]; badges[i] = { ...badges[i], icon: e.target.value }; updateSection('hero', { badges }); }} />
+                      <input className="flex-1 p-1 border rounded" value={b.text} onChange={e => { const badges = [...data.hero.badges]; badges[i] = { ...badges[i], text: e.target.value }; updateSection('hero', { badges }); }} />
+                      <button className={delBtnClass} onClick={() => updateSection('hero', { badges: data.hero.badges.filter((_, idx) => idx !== i) })}>✕</button>
                     </div>
                   ))}
                   <button onClick={() => updateSection('hero', { badges: [...data.hero.badges, { icon: '✨', text: 'Nový' }] })} className="text-xs text-amber-600">+ Pridať</button>
@@ -164,19 +146,19 @@ export default function AdminSidebar() {
 
               {/* OVERVIEW */}
               {tab === 'overview' && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <h3 className="font-bold border-b pb-2">📋 O chate</h3>
-                  <Input label="Label" value={data.overview.label} onChange={v => updateSection('overview', { label: v })} />
-                  <Input label="Titulok" value={data.overview.title} onChange={v => updateSection('overview', { title: v })} />
-                  <Input label="Popis" value={data.overview.description} onChange={v => updateSection('overview', { description: v })} textarea rows={3} />
-                  <ImgBtn label="Obrázok" onClick={() => upload(src => updateSection('overview', { image: src }))} />
-                  <p className="text-xs text-gray-500 font-medium mt-4">Vlastnosti:</p>
+                  <div><label className={labelClass}>Label</label><input className={inputClass} value={data.overview.label} onChange={e => updateSection('overview', { label: e.target.value })} /></div>
+                  <div><label className={labelClass}>Titulok</label><input className={inputClass} value={data.overview.title} onChange={e => updateSection('overview', { title: e.target.value })} /></div>
+                  <div><label className={labelClass}>Popis</label><textarea className={inputClass} rows={3} value={data.overview.description} onChange={e => updateSection('overview', { description: e.target.value })} /></div>
+                  <button className={btnClass} onClick={() => upload(src => updateSection('overview', { image: src }))}>📁 Obrázok</button>
+                  <p className="text-xs text-gray-500 font-medium">Vlastnosti:</p>
                   {data.overview.features.map((f, i) => (
                     <div key={f.id} className="flex gap-1 items-center bg-gray-50 p-2 rounded">
-                      <input value={f.icon} onChange={e => { const features = [...data.overview.features]; features[i].icon = e.target.value; updateSection('overview', { features }); }} className="w-10 p-1 border rounded text-center text-sm" />
-                      <input value={f.title} onChange={e => { const features = [...data.overview.features]; features[i].title = e.target.value; updateSection('overview', { features }); }} className="flex-1 p-1 border rounded text-sm" />
-                      <input value={f.value} onChange={e => { const features = [...data.overview.features]; features[i].value = e.target.value; updateSection('overview', { features }); }} className="w-16 p-1 border rounded text-sm" />
-                      <DelBtn onClick={() => updateSection('overview', { features: data.overview.features.filter(x => x.id !== f.id) })} />
+                      <input className="w-10 p-1 border rounded text-center text-sm" value={f.icon} onChange={e => { const features = [...data.overview.features]; features[i] = { ...features[i], icon: e.target.value }; updateSection('overview', { features }); }} />
+                      <input className="flex-1 p-1 border rounded text-sm" value={f.title} onChange={e => { const features = [...data.overview.features]; features[i] = { ...features[i], title: e.target.value }; updateSection('overview', { features }); }} />
+                      <input className="w-16 p-1 border rounded text-sm" value={f.value} onChange={e => { const features = [...data.overview.features]; features[i] = { ...features[i], value: e.target.value }; updateSection('overview', { features }); }} />
+                      <button className={delBtnClass} onClick={() => updateSection('overview', { features: data.overview.features.filter(x => x.id !== f.id) })}>✕</button>
                     </div>
                   ))}
                   <button onClick={() => updateSection('overview', { features: [...data.overview.features, { id: Date.now().toString(), icon: '✨', title: 'Nové', value: '?' }] })} className="text-xs text-amber-600">+ Pridať</button>
@@ -185,21 +167,21 @@ export default function AdminSidebar() {
 
               {/* GALLERY */}
               {tab === 'gallery' && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex justify-between items-center border-b pb-2">
                     <h3 className="font-bold">🖼️ Galéria ({data.gallery.images.length})</h3>
                     <button onClick={() => upload(src => updateSection('gallery', { images: [...data.gallery.images, { id: Date.now().toString(), src, alt: 'Nový' }] }))} className="px-3 py-1 bg-amber-500 text-white rounded text-sm font-bold">➕</button>
                   </div>
-                  <Input label="Label" value={data.gallery.label} onChange={v => updateSection('gallery', { label: v })} />
-                  <Input label="Titulok" value={data.gallery.title} onChange={v => updateSection('gallery', { title: v })} />
+                  <div><label className={labelClass}>Label</label><input className={inputClass} value={data.gallery.label} onChange={e => updateSection('gallery', { label: e.target.value })} /></div>
+                  <div><label className={labelClass}>Titulok</label><input className={inputClass} value={data.gallery.title} onChange={e => updateSection('gallery', { title: e.target.value })} /></div>
                   <div className="grid grid-cols-4 gap-2 mt-3">
                     {data.gallery.images.map((img, i) => (
                       <div key={img.id} className="relative group">
                         <img src={img.src} alt={img.alt} className="w-full h-16 object-cover rounded" />
                         <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-1 rounded">
-                          {i > 0 && <button onClick={() => { const imgs = [...data.gallery.images]; [imgs[i], imgs[i-1]] = [imgs[i-1], imgs[i]]; updateSection('gallery', { images: imgs }); ok(); }} className="w-5 h-5 bg-white rounded text-xs">←</button>}
-                          <button onClick={() => { updateSection('gallery', { images: data.gallery.images.filter(x => x.id !== img.id) }); ok(); }} className="w-5 h-5 bg-red-500 text-white rounded text-xs">✕</button>
-                          {i < data.gallery.images.length - 1 && <button onClick={() => { const imgs = [...data.gallery.images]; [imgs[i], imgs[i+1]] = [imgs[i+1], imgs[i]]; updateSection('gallery', { images: imgs }); ok(); }} className="w-5 h-5 bg-white rounded text-xs">→</button>}
+                          {i > 0 && <button onClick={() => { const imgs = [...data.gallery.images]; [imgs[i], imgs[i-1]] = [imgs[i-1], imgs[i]]; updateSection('gallery', { images: imgs }); }} className="w-5 h-5 bg-white rounded text-xs">←</button>}
+                          <button onClick={() => updateSection('gallery', { images: data.gallery.images.filter(x => x.id !== img.id) })} className="w-5 h-5 bg-red-500 text-white rounded text-xs">✕</button>
+                          {i < data.gallery.images.length - 1 && <button onClick={() => { const imgs = [...data.gallery.images]; [imgs[i], imgs[i+1]] = [imgs[i+1], imgs[i]]; updateSection('gallery', { images: imgs }); }} className="w-5 h-5 bg-white rounded text-xs">→</button>}
                         </div>
                       </div>
                     ))}
@@ -209,21 +191,21 @@ export default function AdminSidebar() {
 
               {/* AMENITIES */}
               {tab === 'amenities' && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex justify-between items-center border-b pb-2">
                     <h3 className="font-bold">🛋️ Vybavenie ({data.amenities.categories.length})</h3>
                     <button onClick={() => updateSection('amenities', { categories: [...data.amenities.categories, { id: Date.now().toString(), icon: '✨', title: 'Nové', items: ['Položka'] }] })} className="px-3 py-1 bg-amber-500 text-white rounded text-sm font-bold">➕</button>
                   </div>
-                  <Input label="Label" value={data.amenities.label} onChange={v => updateSection('amenities', { label: v })} />
-                  <Input label="Titulok" value={data.amenities.title} onChange={v => updateSection('amenities', { title: v })} />
+                  <div><label className={labelClass}>Label</label><input className={inputClass} value={data.amenities.label} onChange={e => updateSection('amenities', { label: e.target.value })} /></div>
+                  <div><label className={labelClass}>Titulok</label><input className={inputClass} value={data.amenities.title} onChange={e => updateSection('amenities', { title: e.target.value })} /></div>
                   {data.amenities.categories.map((a, i) => (
                     <div key={a.id} className="p-2 bg-gray-50 rounded space-y-2">
                       <div className="flex gap-2 items-center">
-                        <input value={a.icon} onChange={e => { const c = [...data.amenities.categories]; c[i].icon = e.target.value; updateSection('amenities', { categories: c }); }} className="w-10 p-1 border rounded text-center" />
-                        <input value={a.title} onChange={e => { const c = [...data.amenities.categories]; c[i].title = e.target.value; updateSection('amenities', { categories: c }); }} className="flex-1 p-1 border rounded" />
-                        <DelBtn onClick={() => updateSection('amenities', { categories: data.amenities.categories.filter(x => x.id !== a.id) })} />
+                        <input className="w-10 p-1 border rounded text-center" value={a.icon} onChange={e => { const c = [...data.amenities.categories]; c[i] = { ...c[i], icon: e.target.value }; updateSection('amenities', { categories: c }); }} />
+                        <input className="flex-1 p-1 border rounded" value={a.title} onChange={e => { const c = [...data.amenities.categories]; c[i] = { ...c[i], title: e.target.value }; updateSection('amenities', { categories: c }); }} />
+                        <button className={delBtnClass} onClick={() => updateSection('amenities', { categories: data.amenities.categories.filter(x => x.id !== a.id) })}>✕</button>
                       </div>
-                      <textarea value={a.items.join('\n')} onChange={e => { const c = [...data.amenities.categories]; c[i].items = e.target.value.split('\n'); updateSection('amenities', { categories: c }); }} className="w-full p-1 border rounded text-xs" rows={4} placeholder="Každý riadok = položka" />
+                      <textarea className="w-full p-1 border rounded text-xs" rows={4} placeholder="Každý riadok = položka" value={a.items.join('\n')} onChange={e => { const c = [...data.amenities.categories]; c[i] = { ...c[i], items: e.target.value.split('\n') }; updateSection('amenities', { categories: c }); }} />
                     </div>
                   ))}
                 </div>
@@ -231,20 +213,20 @@ export default function AdminSidebar() {
 
               {/* ATMOSPHERE */}
               {tab === 'atmosphere' && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <h3 className="font-bold border-b pb-2">🌅 Atmosféra</h3>
-                  <Input label="Label" value={data.atmosphere.label} onChange={v => updateSection('atmosphere', { label: v })} />
-                  <Input label="Titulok" value={data.atmosphere.title} onChange={v => updateSection('atmosphere', { title: v })} />
-                  <Input label="Text 1" value={data.atmosphere.text1} onChange={v => updateSection('atmosphere', { text1: v })} textarea />
-                  <Input label="Text 2" value={data.atmosphere.text2} onChange={v => updateSection('atmosphere', { text2: v })} textarea />
+                  <div><label className={labelClass}>Label</label><input className={inputClass} value={data.atmosphere.label} onChange={e => updateSection('atmosphere', { label: e.target.value })} /></div>
+                  <div><label className={labelClass}>Titulok</label><input className={inputClass} value={data.atmosphere.title} onChange={e => updateSection('atmosphere', { title: e.target.value })} /></div>
+                  <div><label className={labelClass}>Text 1</label><textarea className={inputClass} rows={2} value={data.atmosphere.text1} onChange={e => updateSection('atmosphere', { text1: e.target.value })} /></div>
+                  <div><label className={labelClass}>Text 2</label><textarea className={inputClass} rows={2} value={data.atmosphere.text2} onChange={e => updateSection('atmosphere', { text2: e.target.value })} /></div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <Input label="Ranný titulok" value={data.atmosphere.morningTitle} onChange={v => updateSection('atmosphere', { morningTitle: v })} />
-                      <ImgBtn label="Ranný obrázok" onClick={() => upload(src => updateSection('atmosphere', { morningImage: src }))} />
+                      <div><label className={labelClass}>Ranný titulok</label><input className={inputClass} value={data.atmosphere.morningTitle} onChange={e => updateSection('atmosphere', { morningTitle: e.target.value })} /></div>
+                      <button className={btnClass + " mt-2"} onClick={() => upload(src => updateSection('atmosphere', { morningImage: src }))}>📁 Ranný obrázok</button>
                     </div>
                     <div>
-                      <Input label="Večerný titulok" value={data.atmosphere.eveningTitle} onChange={v => updateSection('atmosphere', { eveningTitle: v })} />
-                      <ImgBtn label="Večerný obrázok" onClick={() => upload(src => updateSection('atmosphere', { eveningImage: src }))} />
+                      <div><label className={labelClass}>Večerný titulok</label><input className={inputClass} value={data.atmosphere.eveningTitle} onChange={e => updateSection('atmosphere', { eveningTitle: e.target.value })} /></div>
+                      <button className={btnClass + " mt-2"} onClick={() => upload(src => updateSection('atmosphere', { eveningImage: src }))}>📁 Večerný obrázok</button>
                     </div>
                   </div>
                 </div>
@@ -252,20 +234,20 @@ export default function AdminSidebar() {
 
               {/* PRICING */}
               {tab === 'pricing' && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <h3 className="font-bold border-b pb-2">💰 Cenník</h3>
-                  <Input label="Label" value={data.pricing.label} onChange={v => updateSection('pricing', { label: v })} />
-                  <Input label="Titulok" value={data.pricing.title} onChange={v => updateSection('pricing', { title: v })} />
-                  <Input label="Text 'Najpopulárnejší'" value={data.pricing.popularText} onChange={v => updateSection('pricing', { popularText: v })} />
-                  <Input label="Text tlačidla" value={data.pricing.ctaText} onChange={v => updateSection('pricing', { ctaText: v })} />
+                  <div><label className={labelClass}>Label</label><input className={inputClass} value={data.pricing.label} onChange={e => updateSection('pricing', { label: e.target.value })} /></div>
+                  <div><label className={labelClass}>Titulok</label><input className={inputClass} value={data.pricing.title} onChange={e => updateSection('pricing', { title: e.target.value })} /></div>
+                  <div><label className={labelClass}>Text "Najpopulárnejší"</label><input className={inputClass} value={data.pricing.popularText} onChange={e => updateSection('pricing', { popularText: e.target.value })} /></div>
+                  <div><label className={labelClass}>Text tlačidla</label><input className={inputClass} value={data.pricing.ctaText} onChange={e => updateSection('pricing', { ctaText: e.target.value })} /></div>
                   {(['weekend', 'reset', 'week'] as const).map(k => (
                     <div key={k} className="p-2 bg-gray-50 rounded">
                       <p className="font-bold text-xs mb-2">{k === 'weekend' ? '🌙 Víkend' : k === 'reset' ? '⭐ Reset' : '📅 Týždeň'}</p>
                       <div className="grid grid-cols-2 gap-2">
-                        <Input label="Názov" value={data.pricing.packages[k].name} onChange={v => updateSection('pricing', { packages: { ...data.pricing.packages, [k]: { ...data.pricing.packages[k], name: v } } })} />
-                        <Input label="Popis" value={data.pricing.packages[k].desc} onChange={v => updateSection('pricing', { packages: { ...data.pricing.packages, [k]: { ...data.pricing.packages[k], desc: v } } })} />
-                        <Num label="Noci" value={data.pricing.packages[k].nights} onChange={v => updateSection('pricing', { packages: { ...data.pricing.packages, [k]: { ...data.pricing.packages[k], nights: v } } })} />
-                        <Num label="Cena €" value={data.pricing.packages[k].price} onChange={v => updateSection('pricing', { packages: { ...data.pricing.packages, [k]: { ...data.pricing.packages[k], price: v } } })} />
+                        <div><label className={labelClass}>Názov</label><input className={inputClass} value={data.pricing.packages[k].name} onChange={e => updateSection('pricing', { packages: { ...data.pricing.packages, [k]: { ...data.pricing.packages[k], name: e.target.value } } })} /></div>
+                        <div><label className={labelClass}>Popis</label><input className={inputClass} value={data.pricing.packages[k].desc} onChange={e => updateSection('pricing', { packages: { ...data.pricing.packages, [k]: { ...data.pricing.packages[k], desc: e.target.value } } })} /></div>
+                        <div><label className={labelClass}>Noci</label><input type="number" className={inputClass} value={data.pricing.packages[k].nights} onChange={e => updateSection('pricing', { packages: { ...data.pricing.packages, [k]: { ...data.pricing.packages[k], nights: +e.target.value } } })} /></div>
+                        <div><label className={labelClass}>Cena €</label><input type="number" className={inputClass} value={data.pricing.packages[k].price} onChange={e => updateSection('pricing', { packages: { ...data.pricing.packages, [k]: { ...data.pricing.packages[k], price: +e.target.value } } })} /></div>
                       </div>
                     </div>
                   ))}
@@ -274,19 +256,19 @@ export default function AdminSidebar() {
 
               {/* BOOKING */}
               {tab === 'booking' && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <h3 className="font-bold border-b pb-2">📅 Rezervácia</h3>
-                  <Input label="Label" value={data.booking.label} onChange={v => updateSection('booking', { label: v })} />
-                  <Input label="Titulok" value={data.booking.title} onChange={v => updateSection('booking', { title: v })} />
-                  <Num label="Cena/noc €" value={data.booking.pricePerNight} onChange={v => updateSection('booking', { pricePerNight: v })} />
-                  <Num label="Min. nocí" value={data.booking.minNights} onChange={v => updateSection('booking', { minNights: v })} />
-                  <Num label="Max. hostí" value={data.booking.maxGuests} onChange={v => updateSection('booking', { maxGuests: v })} />
+                  <div><label className={labelClass}>Label</label><input className={inputClass} value={data.booking.label} onChange={e => updateSection('booking', { label: e.target.value })} /></div>
+                  <div><label className={labelClass}>Titulok</label><input className={inputClass} value={data.booking.title} onChange={e => updateSection('booking', { title: e.target.value })} /></div>
+                  <div><label className={labelClass}>Cena/noc €</label><input type="number" className={inputClass} value={data.booking.pricePerNight} onChange={e => updateSection('booking', { pricePerNight: +e.target.value })} /></div>
+                  <div><label className={labelClass}>Min. nocí</label><input type="number" className={inputClass} value={data.booking.minNights} onChange={e => updateSection('booking', { minNights: +e.target.value })} /></div>
+                  <div><label className={labelClass}>Max. hostí</label><input type="number" className={inputClass} value={data.booking.maxGuests} onChange={e => updateSection('booking', { maxGuests: +e.target.value })} /></div>
                   <p className="text-xs text-gray-500 font-medium">Booking linky:</p>
                   {data.booking.bookingLinks.map((l, i) => (
                     <div key={l.id} className="flex gap-2 items-center">
-                      <input value={l.name} onChange={e => { const links = [...data.booking.bookingLinks]; links[i].name = e.target.value; updateSection('booking', { bookingLinks: links }); }} className="w-24 p-1 border rounded text-sm" />
-                      <input value={l.url} onChange={e => { const links = [...data.booking.bookingLinks]; links[i].url = e.target.value; updateSection('booking', { bookingLinks: links }); }} className="flex-1 p-1 border rounded text-sm" />
-                      <DelBtn onClick={() => updateSection('booking', { bookingLinks: data.booking.bookingLinks.filter(x => x.id !== l.id) })} />
+                      <input className="w-24 p-1 border rounded text-sm" value={l.name} onChange={e => { const links = [...data.booking.bookingLinks]; links[i] = { ...links[i], name: e.target.value }; updateSection('booking', { bookingLinks: links }); }} />
+                      <input className="flex-1 p-1 border rounded text-sm" value={l.url} onChange={e => { const links = [...data.booking.bookingLinks]; links[i] = { ...links[i], url: e.target.value }; updateSection('booking', { bookingLinks: links }); }} />
+                      <button className={delBtnClass} onClick={() => updateSection('booking', { bookingLinks: data.booking.bookingLinks.filter(x => x.id !== l.id) })}>✕</button>
                     </div>
                   ))}
                   <button onClick={() => updateSection('booking', { bookingLinks: [...data.booking.bookingLinks, { id: Date.now().toString(), name: 'Nový', url: 'https://' }] })} className="text-xs text-amber-600">+ Pridať</button>
@@ -295,22 +277,22 @@ export default function AdminSidebar() {
 
               {/* SURROUNDINGS */}
               {tab === 'surroundings' && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex justify-between items-center border-b pb-2">
                     <h3 className="font-bold">🗺️ Okolie ({data.surroundings.attractions.length})</h3>
                     <button onClick={() => updateSection('surroundings', { attractions: [...data.surroundings.attractions, { id: Date.now().toString(), image: '', category: 'PRÍRODA', title: 'Nové', description: 'Popis...' }] })} className="px-3 py-1 bg-amber-500 text-white rounded text-sm font-bold">➕</button>
                   </div>
-                  <Input label="Label" value={data.surroundings.label} onChange={v => updateSection('surroundings', { label: v })} />
-                  <Input label="Titulok" value={data.surroundings.title} onChange={v => updateSection('surroundings', { title: v })} />
+                  <div><label className={labelClass}>Label</label><input className={inputClass} value={data.surroundings.label} onChange={e => updateSection('surroundings', { label: e.target.value })} /></div>
+                  <div><label className={labelClass}>Titulok</label><input className={inputClass} value={data.surroundings.title} onChange={e => updateSection('surroundings', { title: e.target.value })} /></div>
                   {data.surroundings.attractions.map((a, i) => (
                     <div key={a.id} className="p-2 bg-gray-50 rounded space-y-2">
                       <div className="flex gap-2 items-center">
-                        <input value={a.category} onChange={e => { const arr = [...data.surroundings.attractions]; arr[i].category = e.target.value; updateSection('surroundings', { attractions: arr }); }} className="w-20 p-1 border rounded text-xs" />
-                        <input value={a.title} onChange={e => { const arr = [...data.surroundings.attractions]; arr[i].title = e.target.value; updateSection('surroundings', { attractions: arr }); }} className="flex-1 p-1 border rounded text-sm" />
-                        <DelBtn onClick={() => updateSection('surroundings', { attractions: data.surroundings.attractions.filter(x => x.id !== a.id) })} />
+                        <input className="w-20 p-1 border rounded text-xs" value={a.category} onChange={e => { const arr = [...data.surroundings.attractions]; arr[i] = { ...arr[i], category: e.target.value }; updateSection('surroundings', { attractions: arr }); }} />
+                        <input className="flex-1 p-1 border rounded text-sm" value={a.title} onChange={e => { const arr = [...data.surroundings.attractions]; arr[i] = { ...arr[i], title: e.target.value }; updateSection('surroundings', { attractions: arr }); }} />
+                        <button className={delBtnClass} onClick={() => updateSection('surroundings', { attractions: data.surroundings.attractions.filter(x => x.id !== a.id) })}>✕</button>
                       </div>
-                      <textarea value={a.description} onChange={e => { const arr = [...data.surroundings.attractions]; arr[i].description = e.target.value; updateSection('surroundings', { attractions: arr }); }} className="w-full p-1 border rounded text-xs" rows={2} />
-                      <button onClick={() => upload(src => { const arr = [...data.surroundings.attractions]; arr[i].image = src; updateSection('surroundings', { attractions: arr }); })} className="w-full p-1 bg-amber-500 text-white rounded text-xs">📁 Obrázok</button>
+                      <textarea className="w-full p-1 border rounded text-xs" rows={2} value={a.description} onChange={e => { const arr = [...data.surroundings.attractions]; arr[i] = { ...arr[i], description: e.target.value }; updateSection('surroundings', { attractions: arr }); }} />
+                      <button onClick={() => upload(src => { const arr = [...data.surroundings.attractions]; arr[i] = { ...arr[i], image: src }; updateSection('surroundings', { attractions: arr }); })} className="w-full p-1 bg-amber-500 text-white rounded text-xs">📁 Obrázok</button>
                     </div>
                   ))}
                 </div>
@@ -318,24 +300,24 @@ export default function AdminSidebar() {
 
               {/* REVIEWS */}
               {tab === 'reviews' && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex justify-between items-center border-b pb-2">
                     <h3 className="font-bold">⭐ Recenzie ({data.reviews.items.length})</h3>
                     <button onClick={() => updateSection('reviews', { items: [...data.reviews.items, { id: Date.now().toString(), name: 'Meno', text: 'Text...', rating: 5, date: '2024-01' }] })} className="px-3 py-1 bg-amber-500 text-white rounded text-sm font-bold">➕</button>
                   </div>
-                  <Input label="Label" value={data.reviews.label} onChange={v => updateSection('reviews', { label: v })} />
-                  <Input label="Titulok" value={data.reviews.title} onChange={v => updateSection('reviews', { title: v })} />
+                  <div><label className={labelClass}>Label</label><input className={inputClass} value={data.reviews.label} onChange={e => updateSection('reviews', { label: e.target.value })} /></div>
+                  <div><label className={labelClass}>Titulok</label><input className={inputClass} value={data.reviews.title} onChange={e => updateSection('reviews', { title: e.target.value })} /></div>
                   {data.reviews.items.map((r, i) => (
                     <div key={r.id} className="p-2 bg-gray-50 rounded space-y-2">
                       <div className="flex gap-2 items-center">
-                        <input value={r.name} onChange={e => { const arr = [...data.reviews.items]; arr[i].name = e.target.value; updateSection('reviews', { items: arr }); }} className="flex-1 p-1 border rounded text-sm" />
-                        <input value={r.date} onChange={e => { const arr = [...data.reviews.items]; arr[i].date = e.target.value; updateSection('reviews', { items: arr }); }} className="w-20 p-1 border rounded text-xs" />
-                        <select value={r.rating} onChange={e => { const arr = [...data.reviews.items]; arr[i].rating = +e.target.value; updateSection('reviews', { items: arr }); }} className="p-1 border rounded text-sm">
+                        <input className="flex-1 p-1 border rounded text-sm" value={r.name} onChange={e => { const arr = [...data.reviews.items]; arr[i] = { ...arr[i], name: e.target.value }; updateSection('reviews', { items: arr }); }} />
+                        <input className="w-20 p-1 border rounded text-xs" value={r.date} onChange={e => { const arr = [...data.reviews.items]; arr[i] = { ...arr[i], date: e.target.value }; updateSection('reviews', { items: arr }); }} />
+                        <select className="p-1 border rounded text-sm" value={r.rating} onChange={e => { const arr = [...data.reviews.items]; arr[i] = { ...arr[i], rating: +e.target.value }; updateSection('reviews', { items: arr }); }}>
                           {[5,4,3,2,1].map(n => <option key={n} value={n}>{n}⭐</option>)}
                         </select>
-                        <DelBtn onClick={() => updateSection('reviews', { items: data.reviews.items.filter(x => x.id !== r.id) })} />
+                        <button className={delBtnClass} onClick={() => updateSection('reviews', { items: data.reviews.items.filter(x => x.id !== r.id) })}>✕</button>
                       </div>
-                      <textarea value={r.text} onChange={e => { const arr = [...data.reviews.items]; arr[i].text = e.target.value; updateSection('reviews', { items: arr }); }} className="w-full p-1 border rounded text-xs" rows={2} />
+                      <textarea className="w-full p-1 border rounded text-xs" rows={2} value={r.text} onChange={e => { const arr = [...data.reviews.items]; arr[i] = { ...arr[i], text: e.target.value }; updateSection('reviews', { items: arr }); }} />
                     </div>
                   ))}
                 </div>
@@ -343,20 +325,20 @@ export default function AdminSidebar() {
 
               {/* FAQ */}
               {tab === 'faq' && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex justify-between items-center border-b pb-2">
                     <h3 className="font-bold">❓ FAQ ({data.faq.items.length})</h3>
                     <button onClick={() => updateSection('faq', { items: [...data.faq.items, { id: Date.now().toString(), question: 'Otázka?', answer: 'Odpoveď...' }] })} className="px-3 py-1 bg-amber-500 text-white rounded text-sm font-bold">➕</button>
                   </div>
-                  <Input label="Label" value={data.faq.label} onChange={v => updateSection('faq', { label: v })} />
-                  <Input label="Titulok" value={data.faq.title} onChange={v => updateSection('faq', { title: v })} />
+                  <div><label className={labelClass}>Label</label><input className={inputClass} value={data.faq.label} onChange={e => updateSection('faq', { label: e.target.value })} /></div>
+                  <div><label className={labelClass}>Titulok</label><input className={inputClass} value={data.faq.title} onChange={e => updateSection('faq', { title: e.target.value })} /></div>
                   {data.faq.items.map((f, i) => (
                     <div key={f.id} className="p-2 bg-gray-50 rounded space-y-2">
                       <div className="flex gap-2 items-center">
-                        <input value={f.question} onChange={e => { const arr = [...data.faq.items]; arr[i].question = e.target.value; updateSection('faq', { items: arr }); }} className="flex-1 p-1 border rounded text-sm font-medium" />
-                        <DelBtn onClick={() => updateSection('faq', { items: data.faq.items.filter(x => x.id !== f.id) })} />
+                        <input className="flex-1 p-1 border rounded text-sm font-medium" value={f.question} onChange={e => { const arr = [...data.faq.items]; arr[i] = { ...arr[i], question: e.target.value }; updateSection('faq', { items: arr }); }} />
+                        <button className={delBtnClass} onClick={() => updateSection('faq', { items: data.faq.items.filter(x => x.id !== f.id) })}>✕</button>
                       </div>
-                      <textarea value={f.answer} onChange={e => { const arr = [...data.faq.items]; arr[i].answer = e.target.value; updateSection('faq', { items: arr }); }} className="w-full p-1 border rounded text-xs" rows={2} />
+                      <textarea className="w-full p-1 border rounded text-xs" rows={2} value={f.answer} onChange={e => { const arr = [...data.faq.items]; arr[i] = { ...arr[i], answer: e.target.value }; updateSection('faq', { items: arr }); }} />
                     </div>
                   ))}
                 </div>
@@ -364,55 +346,55 @@ export default function AdminSidebar() {
 
               {/* CONTACT */}
               {tab === 'contact' && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <h3 className="font-bold border-b pb-2">📞 Kontakt</h3>
-                  <Input label="Label" value={data.contact.label} onChange={v => updateSection('contact', { label: v })} />
-                  <Input label="Titulok" value={data.contact.title} onChange={v => updateSection('contact', { title: v })} />
-                  <Input label="Adresa - label" value={data.contact.addressLabel} onChange={v => updateSection('contact', { addressLabel: v })} />
-                  <Input label="Adresa" value={data.contact.address} onChange={v => updateSection('contact', { address: v })} />
-                  <Input label="Telefón - label" value={data.contact.phoneLabel} onChange={v => updateSection('contact', { phoneLabel: v })} />
-                  <Input label="Telefón" value={data.contact.phone} onChange={v => updateSection('contact', { phone: v })} />
-                  <Input label="Email - label" value={data.contact.emailLabel} onChange={v => updateSection('contact', { emailLabel: v })} />
-                  <Input label="Email" value={data.contact.email} onChange={v => updateSection('contact', { email: v })} />
-                  <Input label="Časy - label" value={data.contact.hoursLabel} onChange={v => updateSection('contact', { hoursLabel: v })} />
+                  <div><label className={labelClass}>Label</label><input className={inputClass} value={data.contact.label} onChange={e => updateSection('contact', { label: e.target.value })} /></div>
+                  <div><label className={labelClass}>Titulok</label><input className={inputClass} value={data.contact.title} onChange={e => updateSection('contact', { title: e.target.value })} /></div>
+                  <div><label className={labelClass}>Adresa - label</label><input className={inputClass} value={data.contact.addressLabel} onChange={e => updateSection('contact', { addressLabel: e.target.value })} /></div>
+                  <div><label className={labelClass}>Adresa</label><input className={inputClass} value={data.contact.address} onChange={e => updateSection('contact', { address: e.target.value })} /></div>
+                  <div><label className={labelClass}>Telefón - label</label><input className={inputClass} value={data.contact.phoneLabel} onChange={e => updateSection('contact', { phoneLabel: e.target.value })} /></div>
+                  <div><label className={labelClass}>Telefón</label><input className={inputClass} value={data.contact.phone} onChange={e => updateSection('contact', { phone: e.target.value })} /></div>
+                  <div><label className={labelClass}>Email - label</label><input className={inputClass} value={data.contact.emailLabel} onChange={e => updateSection('contact', { emailLabel: e.target.value })} /></div>
+                  <div><label className={labelClass}>Email</label><input className={inputClass} value={data.contact.email} onChange={e => updateSection('contact', { email: e.target.value })} /></div>
+                  <div><label className={labelClass}>Časy - label</label><input className={inputClass} value={data.contact.hoursLabel} onChange={e => updateSection('contact', { hoursLabel: e.target.value })} /></div>
                   <div className="grid grid-cols-2 gap-2">
-                    <Input label="Check-in" value={data.contact.checkIn} onChange={v => updateSection('contact', { checkIn: v })} />
-                    <Input label="Check-out" value={data.contact.checkOut} onChange={v => updateSection('contact', { checkOut: v })} />
+                    <div><label className={labelClass}>Check-in</label><input className={inputClass} value={data.contact.checkIn} onChange={e => updateSection('contact', { checkIn: e.target.value })} /></div>
+                    <div><label className={labelClass}>Check-out</label><input className={inputClass} value={data.contact.checkOut} onChange={e => updateSection('contact', { checkOut: e.target.value })} /></div>
                   </div>
-                  <Input label="Mapa - label" value={data.contact.mapLabel} onChange={v => updateSection('contact', { mapLabel: v })} />
+                  <div><label className={labelClass}>Mapa - label</label><input className={inputClass} value={data.contact.mapLabel} onChange={e => updateSection('contact', { mapLabel: e.target.value })} /></div>
                 </div>
               )}
 
               {/* FOOTER */}
               {tab === 'footer' && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <h3 className="font-bold border-b pb-2">📄 Footer</h3>
-                  <Input label="Popis" value={data.footer.description} onChange={v => updateSection('footer', { description: v })} textarea rows={3} />
-                  <Input label="Telefón" value={data.footer.phone} onChange={v => updateSection('footer', { phone: v })} />
-                  <Input label="Email" value={data.footer.email} onChange={v => updateSection('footer', { email: v })} />
-                  <Input label="Lokácia" value={data.footer.location} onChange={v => updateSection('footer', { location: v })} />
-                  <Input label="Copyright" value={data.footer.copyright} onChange={v => updateSection('footer', { copyright: v })} />
-                  <Input label="Made with" value={data.footer.madeWith} onChange={v => updateSection('footer', { madeWith: v })} />
-                  <Input label="Privacy text" value={data.footer.privacyText} onChange={v => updateSection('footer', { privacyText: v })} />
-                  <Input label="Terms text" value={data.footer.termsText} onChange={v => updateSection('footer', { termsText: v })} />
-                  <Input label="Book via text" value={data.footer.bookViaText} onChange={v => updateSection('footer', { bookViaText: v })} />
+                  <div><label className={labelClass}>Popis</label><textarea className={inputClass} rows={3} value={data.footer.description} onChange={e => updateSection('footer', { description: e.target.value })} /></div>
+                  <div><label className={labelClass}>Telefón</label><input className={inputClass} value={data.footer.phone} onChange={e => updateSection('footer', { phone: e.target.value })} /></div>
+                  <div><label className={labelClass}>Email</label><input className={inputClass} value={data.footer.email} onChange={e => updateSection('footer', { email: e.target.value })} /></div>
+                  <div><label className={labelClass}>Lokácia</label><input className={inputClass} value={data.footer.location} onChange={e => updateSection('footer', { location: e.target.value })} /></div>
+                  <div><label className={labelClass}>Copyright</label><input className={inputClass} value={data.footer.copyright} onChange={e => updateSection('footer', { copyright: e.target.value })} /></div>
+                  <div><label className={labelClass}>Made with</label><input className={inputClass} value={data.footer.madeWith} onChange={e => updateSection('footer', { madeWith: e.target.value })} /></div>
+                  <div><label className={labelClass}>Privacy text</label><input className={inputClass} value={data.footer.privacyText} onChange={e => updateSection('footer', { privacyText: e.target.value })} /></div>
+                  <div><label className={labelClass}>Terms text</label><input className={inputClass} value={data.footer.termsText} onChange={e => updateSection('footer', { termsText: e.target.value })} /></div>
+                  <div><label className={labelClass}>Book via text</label><input className={inputClass} value={data.footer.bookViaText} onChange={e => updateSection('footer', { bookViaText: e.target.value })} /></div>
                 </div>
               )}
 
               {/* NAV */}
               {tab === 'nav' && (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <h3 className="font-bold border-b pb-2">🧭 Navigácia</h3>
-                  <Input label="Domov" value={data.nav.home} onChange={v => updateSection('nav', { home: v })} />
-                  <Input label="Galéria" value={data.nav.gallery} onChange={v => updateSection('nav', { gallery: v })} />
-                  <Input label="Vybavenie" value={data.nav.amenities} onChange={v => updateSection('nav', { amenities: v })} />
-                  <Input label="Rezervácia" value={data.nav.booking} onChange={v => updateSection('nav', { booking: v })} />
-                  <Input label="Cenník" value={data.nav.pricing} onChange={v => updateSection('nav', { pricing: v })} />
-                  <Input label="Okolie" value={data.nav.surroundings} onChange={v => updateSection('nav', { surroundings: v })} />
-                  <Input label="Recenzie" value={data.nav.reviews} onChange={v => updateSection('nav', { reviews: v })} />
-                  <Input label="FAQ" value={data.nav.faq} onChange={v => updateSection('nav', { faq: v })} />
-                  <Input label="Kontakt" value={data.nav.contact} onChange={v => updateSection('nav', { contact: v })} />
-                  <Input label="Tlačidlo Rezervovať" value={data.nav.bookNow} onChange={v => updateSection('nav', { bookNow: v })} />
+                  <div><label className={labelClass}>Domov</label><input className={inputClass} value={data.nav.home} onChange={e => updateSection('nav', { home: e.target.value })} /></div>
+                  <div><label className={labelClass}>Galéria</label><input className={inputClass} value={data.nav.gallery} onChange={e => updateSection('nav', { gallery: e.target.value })} /></div>
+                  <div><label className={labelClass}>Vybavenie</label><input className={inputClass} value={data.nav.amenities} onChange={e => updateSection('nav', { amenities: e.target.value })} /></div>
+                  <div><label className={labelClass}>Rezervácia</label><input className={inputClass} value={data.nav.booking} onChange={e => updateSection('nav', { booking: e.target.value })} /></div>
+                  <div><label className={labelClass}>Cenník</label><input className={inputClass} value={data.nav.pricing} onChange={e => updateSection('nav', { pricing: e.target.value })} /></div>
+                  <div><label className={labelClass}>Okolie</label><input className={inputClass} value={data.nav.surroundings} onChange={e => updateSection('nav', { surroundings: e.target.value })} /></div>
+                  <div><label className={labelClass}>Recenzie</label><input className={inputClass} value={data.nav.reviews} onChange={e => updateSection('nav', { reviews: e.target.value })} /></div>
+                  <div><label className={labelClass}>FAQ</label><input className={inputClass} value={data.nav.faq} onChange={e => updateSection('nav', { faq: e.target.value })} /></div>
+                  <div><label className={labelClass}>Kontakt</label><input className={inputClass} value={data.nav.contact} onChange={e => updateSection('nav', { contact: e.target.value })} /></div>
+                  <div><label className={labelClass}>Tlačidlo Rezervovať</label><input className={inputClass} value={data.nav.bookNow} onChange={e => updateSection('nav', { bookNow: e.target.value })} /></div>
                 </div>
               )}
 
