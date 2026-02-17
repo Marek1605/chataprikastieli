@@ -1,58 +1,136 @@
 'use client';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-const STORAGE_KEY = 'chata_super_admin_v1';
+const STORAGE_KEY = 'chata_mega_admin_v1';
 
-interface GalleryImage { id: string; src: string; alt: string; category?: string; }
+interface GalleryImage { id: string; src: string; alt: string; }
 interface Review { id: string; name: string; text: string; rating: number; date: string; }
 interface FAQ { id: string; question: string; answer: string; }
-interface PricePackage { nights: number; price: number; perNight: number; }
-interface Feature { id: string; icon: string; title: string; description: string; }
-interface Attraction { id: string; icon: string; title: string; distance: string; }
+interface Amenity { id: string; icon: string; title: string; items: string[]; }
+interface Attraction { id: string; image: string; category: string; title: string; description: string; }
+interface BookingLink { id: string; name: string; url: string; }
 
 interface SiteData {
+  // HERO
   hero: {
     title: string;
     subtitle: string;
     backgroundImage: string;
     badges: { icon: string; text: string; }[];
+    rating: string;
+    ratingText: string;
+    cta1: string;
+    cta2: string;
   };
+  // OVERVIEW / O CHATE
   overview: {
+    label: string;
     title: string;
-    subtitle: string;
     description: string;
-    features: Feature[];
+    features: { id: string; icon: string; title: string; value: string; }[];
+    image: string;
   };
-  gallery: GalleryImage[];
+  // GALLERY
+  gallery: {
+    label: string;
+    title: string;
+    images: GalleryImage[];
+  };
+  // AMENITIES / VYBAVENIE
   amenities: {
+    label: string;
     title: string;
-    subtitle: string;
-    items: { id: string; icon: string; name: string; description: string; }[];
+    categories: Amenity[];
   };
+  // ATMOSPHERE / ATMOSFÉRA
+  atmosphere: {
+    label: string;
+    title: string;
+    morningTitle: string;
+    morningImage: string;
+    eveningTitle: string;
+    eveningImage: string;
+    text1: string;
+    text2: string;
+  };
+  // PRICING / CENNÍK
   pricing: {
-    weekend: PricePackage;
-    reset: PricePackage;
-    week: PricePackage;
-  };
-  surroundings: {
+    label: string;
     title: string;
-    subtitle: string;
+    popularText: string;
+    ctaText: string;
+    packages: {
+      weekend: { name: string; desc: string; nights: number; price: number; };
+      reset: { name: string; desc: string; nights: number; price: number; };
+      week: { name: string; desc: string; nights: number; price: number; };
+    };
+  };
+  // BOOKING / REZERVÁCIA
+  booking: {
+    label: string;
+    title: string;
+    pricePerNight: number;
+    minNights: number;
+    maxGuests: number;
+    bookingLinks: BookingLink[];
+  };
+  // SURROUNDINGS / OKOLIE
+  surroundings: {
+    label: string;
+    title: string;
     attractions: Attraction[];
   };
-  reviews: Review[];
-  faq: FAQ[];
+  // REVIEWS / RECENZIE
+  reviews: {
+    label: string;
+    title: string;
+    items: Review[];
+  };
+  // FAQ
+  faq: {
+    label: string;
+    title: string;
+    items: FAQ[];
+  };
+  // CONTACT / KONTAKT
   contact: {
-    phone: string;
-    email: string;
+    label: string;
+    title: string;
+    addressLabel: string;
     address: string;
+    phoneLabel: string;
+    phone: string;
+    emailLabel: string;
+    email: string;
+    hoursLabel: string;
     checkIn: string;
     checkOut: string;
-    mapUrl: string;
+    mapLabel: string;
   };
-  seo: {
-    title: string;
+  // FOOTER
+  footer: {
     description: string;
-    keywords: string;
+    phone: string;
+    email: string;
+    location: string;
+    copyright: string;
+    madeWith: string;
+    privacyText: string;
+    termsText: string;
+    bookViaText: string;
+  };
+  // NAVIGATION
+  nav: {
+    home: string;
+    gallery: string;
+    amenities: string;
+    booking: string;
+    pricing: string;
+    surroundings: string;
+    reviews: string;
+    faq: string;
+    contact: string;
+    bookNow: string;
   };
 }
 
@@ -67,76 +145,144 @@ const defaultData: SiteData = {
       { icon: '🤫', text: 'Kľud' },
       { icon: '🔑', text: 'Self check-in' },
     ],
+    rating: '4.9/5',
+    ratingText: 'Hostia sa vracajú',
+    cta1: 'Rezervovať pobyt',
+    cta2: 'Overiť dostupnosť',
   },
   overview: {
+    label: 'O CHATE',
     title: 'Váš horský únik',
-    subtitle: 'O chate',
-    description: 'Moderná chata s tradičným duchom, kde sa stretáva komfort s prírodou.',
+    description: 'Moderná chata s tradičným duchom, kde sa stretáva komfort s prírodou. Ideálne miesto pre rodinnú dovolenku, romantický víkend alebo pracovný retreat.',
     features: [
-      { id: '1', icon: '🛏️', title: '3 spálne', description: 'Pre 6-8 hostí' },
-      { id: '2', icon: '🚿', title: '2 kúpeľne', description: 'Moderné vybavenie' },
-      { id: '3', icon: '🏔️', title: 'Terasa', description: 'Panoramatický výhľad' },
-      { id: '4', icon: '🅿️', title: 'Parkovanie', description: 'Pre 2 autá' },
+      { id: '1', icon: '🛏️', title: 'Spálne', value: '3' },
+      { id: '2', icon: '👥', title: 'Hostia', value: '6-8' },
+      { id: '3', icon: '🚿', title: 'Kúpeľne', value: '2' },
+      { id: '4', icon: '📐', title: 'Plocha', value: '120m²' },
+    ],
+    image: '/assets/overview.jpg',
+  },
+  gallery: {
+    label: 'FOTOGALÉRIA',
+    title: 'Nahliadnite dovnútra',
+    images: [
+      { id: '1', src: '/assets/gallery-1.jpg', alt: 'Interiér' },
+      { id: '2', src: '/assets/gallery-2.jpg', alt: 'Obývačka' },
+      { id: '3', src: '/assets/gallery-3.jpg', alt: 'Spálňa' },
+      { id: '4', src: '/assets/gallery-4.jpg', alt: 'Kuchyňa' },
+      { id: '5', src: '/assets/surrounding-2.jpg', alt: 'Okolie' },
+      { id: '6', src: '/assets/surrounding-3.jpg', alt: 'Príroda' },
     ],
   },
-  gallery: [
-    { id: '1', src: '/assets/gallery-1.jpg', alt: 'Interiér', category: 'interior' },
-    { id: '2', src: '/assets/gallery-2.jpg', alt: 'Obývačka', category: 'interior' },
-    { id: '3', src: '/assets/gallery-3.jpg', alt: 'Spálňa', category: 'interior' },
-    { id: '4', src: '/assets/gallery-4.jpg', alt: 'Kuchyňa', category: 'interior' },
-    { id: '5', src: '/assets/surrounding-2.jpg', alt: 'Okolie', category: 'exterior' },
-    { id: '6', src: '/assets/surrounding-3.jpg', alt: 'Príroda', category: 'exterior' },
-  ],
   amenities: {
-    title: 'Vybavenie chaty',
-    subtitle: 'Všetko pre váš komfort',
-    items: [
-      { id: '1', icon: '📺', name: 'Smart TV', description: 'Netflix, YouTube' },
-      { id: '2', icon: '📶', name: 'WiFi', description: 'Vysokorýchlostný internet' },
-      { id: '3', icon: '🍳', name: 'Plne vybavená kuchyňa', description: 'Všetko potrebné' },
-      { id: '4', icon: '🔥', name: 'Krb', description: 'Romantická atmosféra' },
-      { id: '5', icon: '🧺', name: 'Práčka', description: 'Pre dlhšie pobyty' },
-      { id: '6', icon: '❄️', name: 'Klimatizácia', description: 'Komfort v lete' },
+    label: 'VYBAVENIE CHATY',
+    title: 'Všetko pre váš komfort',
+    categories: [
+      { id: '1', icon: '🍳', title: 'Plne vybavená kuchyňa', items: ['Indukčná varná doska', 'Prémiový kávovar', 'Veľká chladnička', 'Mikrovlnná rúra', 'Kompletný riad pre 6 osôb'] },
+      { id: '2', icon: '🚿', title: 'Moderná kúpeľňa', items: ['Priestranný sprchový kút', 'Prémiová kozmetika', 'Profesionálny fén', 'Mäkké uteráky', 'Podlahové kúrenie'] },
+      { id: '3', icon: '🛏️', title: 'Pohodlná spálňa', items: ['Kvalitné postele s ortopedickými matracmi', 'Luxusné bavlnené obliečky', 'Zatemňovacie závesy', 'Priestranné úložné priestory', 'Nočné stolíky s USB nabíjačkami'] },
+      { id: '4', icon: '🛋️', title: 'Útulná obývačka', items: ['Pohodlná rozkladacia sedačka', '55" Smart TV s Netflixom', 'Bluetooth reproduktor', 'Výber stolových hier', 'Panoramatický výhľad na hory'] },
+      { id: '5', icon: '🌲', title: 'Súkromný exteriér', items: ['Priestranná terasa so sedením', 'Záhradný nábytok', 'Súkromné parkovanie', 'Plynový gril Weber', 'Upravená záhrada'] },
+      { id: '6', icon: '🎿', title: 'Zážitky v okolí', items: ['Turistické chodníky', 'Cyklotrasy', 'Lyžiarske strediská', 'Historické pamiatky', 'Wellness centrá'] },
     ],
+  },
+  atmosphere: {
+    label: 'ATMOSFÉRA',
+    title: 'Každý moment má svoju krásu',
+    morningTitle: 'Ranná atmosféra',
+    morningImage: '/assets/morning.jpg',
+    eveningTitle: 'Večerná atmosféra',
+    eveningImage: '/assets/evening.jpg',
+    text1: 'Ráno vás zobudí jemné svetlo prenikajúce cez okná s výhľadom na hory.',
+    text2: 'Večer si vychutnajte západ slnka z terasy s pohárom vína.',
   },
   pricing: {
-    weekend: { nights: 2, price: 340, perNight: 170 },
-    reset: { nights: 3, price: 459, perNight: 153 },
-    week: { nights: 7, price: 980, perNight: 140 },
+    label: 'CENNÍK',
+    title: 'Vyberte si ideálny pobyt',
+    popularText: 'Najpopulárnejší',
+    ctaText: 'Chcem tento pobyt',
+    packages: {
+      weekend: { name: 'Víkendový pobyt', desc: 'Piatok - Nedeľa', nights: 2, price: 200 },
+      reset: { name: 'Reset pobyt', desc: 'Ideálny krátky únik', nights: 3, price: 300 },
+      week: { name: 'Týždenný pobyt', desc: 'Plnohodnotná dovolenka', nights: 7, price: 650 },
+    },
   },
-  surroundings: {
-    title: 'Čo nájdete v okolí',
-    subtitle: 'Atrakcie a aktivity',
-    attractions: [
-      { id: '1', icon: '⛷️', title: 'Ski Martinky', distance: '15 min' },
-      { id: '2', icon: '🥾', title: 'Turistické trasy', distance: '5 min' },
-      { id: '3', icon: '🏊', title: 'Aquapark', distance: '20 min' },
-      { id: '4', icon: '🏰', title: 'Kaštieľ Necpaly', distance: '2 min' },
+  booking: {
+    label: 'REZERVÁCIA',
+    title: 'Vyberte si termín',
+    pricePerNight: 85,
+    minNights: 2,
+    maxGuests: 8,
+    bookingLinks: [
+      { id: '1', name: 'Airbnb', url: 'https://airbnb.com' },
+      { id: '2', name: 'Booking.com', url: 'https://booking.com' },
     ],
   },
-  reviews: [
-    { id: '1', name: 'Jana K.', text: 'Nádherné miesto na oddych! Výhľad je úžasný a chata má všetko čo potrebujete.', rating: 5, date: '2024-10' },
-    { id: '2', name: 'Peter M.', text: 'Super výhľad, čistota, pokoj. Určite sa vrátime!', rating: 5, date: '2024-09' },
-    { id: '3', name: 'Lucia S.', text: 'Perfektný víkendový únik. Odporúčam všetkým.', rating: 5, date: '2024-08' },
-  ],
-  faq: [
-    { id: '1', question: 'Aký je čas príchodu a odchodu?', answer: 'Check-in je od 15:00 a check-out do 10:00. Po dohode možné upraviť.' },
-    { id: '2', question: 'Je možné priviesť domáce zviera?', answer: 'Áno, domáce zvieratá sú vítané po predchádzajúcej dohode.' },
-    { id: '3', question: 'Je k dispozícii parkovanie?', answer: 'Áno, máme bezplatné parkovanie pre 2 autá priamo pri chate.' },
-    { id: '4', question: 'Aké platobné metódy akceptujete?', answer: 'Akceptujeme bankový prevod a platbu kartou.' },
-  ],
+  surroundings: {
+    label: 'OKOLIE A ATRAKCIE',
+    title: 'Objavte krásu Turca',
+    attractions: [
+      { id: '1', image: '/assets/surrounding-1.jpg', category: 'PRÍRODA', title: 'Necpalská dolina', description: 'Krásna prírodná dolina s turistickými chodníkmi priamo od chaty.' },
+      { id: '2', image: '/assets/surrounding-2.jpg', category: 'CELODENNÝ VÝLET', title: 'Ploská & Borišov', description: 'Populárne vrcholy Veľkej Fatry s úžasnými výhľadmi.' },
+      { id: '3', image: '/assets/surrounding-3.jpg', category: 'ĽAHKÁ PRECHÁDZKA', title: 'Necpalské vodopády', description: 'Romantické prírodné vodopády ideálne na ľahkú prechádzku.' },
+      { id: '4', image: '/assets/surrounding-4.jpg', category: 'CELOROČNE', title: 'Jasenská dolina', description: 'Lyžiarske stredisko v zime, turistika a cyklistika v lete.' },
+    ],
+  },
+  reviews: {
+    label: 'RECENZIE HOSTÍ',
+    title: 'Čo hovoria naši hostia',
+    items: [
+      { id: '1', name: 'Jana K.', text: 'Nádherné miesto na oddych! Výhľad je úžasný a chata má všetko čo potrebujete.', rating: 5, date: '2024-10' },
+      { id: '2', name: 'Peter M.', text: 'Super výhľad, čistota, pokoj. Určite sa vrátime!', rating: 5, date: '2024-09' },
+      { id: '3', name: 'Lucia S.', text: 'Perfektný víkendový únik. Odporúčam všetkým.', rating: 5, date: '2024-08' },
+    ],
+  },
+  faq: {
+    label: 'FAQ',
+    title: 'Často kladené otázky',
+    items: [
+      { id: '1', question: 'Aký je čas príchodu a odchodu?', answer: 'Check-in je od 15:00 a check-out do 10:00. Po dohode možné upraviť.' },
+      { id: '2', question: 'Je možné priviesť domáce zviera?', answer: 'Áno, domáce zvieratá sú vítané po predchádzajúcej dohode.' },
+      { id: '3', question: 'Je k dispozícii parkovanie?', answer: 'Áno, máme bezplatné parkovanie pre 2 autá priamo pri chate.' },
+      { id: '4', question: 'Aké platobné metódy akceptujete?', answer: 'Akceptujeme bankový prevod a platbu kartou.' },
+    ],
+  },
   contact: {
-    phone: '+421 900 123 456',
-    email: 'info@chataprikastieli.sk',
-    address: 'Chata pri Kaštieli, Necpaly 123, 038 12 Necpaly',
+    label: 'KONTAKT',
+    title: 'Kontaktujte nás',
+    addressLabel: 'Adresa',
+    address: 'Necpaly 90, 038 12 Necpaly',
+    phoneLabel: 'Telefón',
+    phone: '+421 915 327 597',
+    emailLabel: 'Email',
+    email: 'chataprikastieli@gmail.com',
+    hoursLabel: 'Časy',
     checkIn: '15:00',
     checkOut: '10:00',
-    mapUrl: 'https://maps.google.com/?q=49.0735,18.8735',
+    mapLabel: 'Nájdite nás',
   },
-  seo: {
-    title: 'Chata pri Kaštieli - Luxusná horská chata v Turci',
-    description: 'Luxusná horská chata s panoramatickým výhľadom na Malú Fatru. Ideálne miesto pre rodinnú dovolenku.',
-    keywords: 'chata, Turiec, Malá Fatra, ubytovanie, dovolenka',
+  footer: {
+    description: 'Luxusná horská chata v Turci s výhľadom na Malú Fatru. Ideálne miesto pre romantický víkend, rodinnú dovolenku alebo pracovný retreat.',
+    phone: '+421 915 327 597',
+    email: 'info@chataprikastieli.sk',
+    location: 'Necpaly, Turiec, Slovensko',
+    copyright: '© 2026 Chata pri Kaštieli. Všetky práva vyhradené.',
+    madeWith: 'Made with ❤️ in Slovakia',
+    privacyText: 'Ochrana súkromia',
+    termsText: 'Obchodné podmienky',
+    bookViaText: 'REZERVUJTE AJ CEZ:',
+  },
+  nav: {
+    home: 'Domov',
+    gallery: 'Galéria',
+    amenities: 'Vybavenie',
+    booking: 'Rezervácia',
+    pricing: 'Cenník',
+    surroundings: 'Okolie',
+    reviews: 'Recenzie',
+    faq: 'FAQ',
+    contact: 'Kontakt',
+    bookNow: 'Rezervovať',
   },
 };
 
@@ -144,16 +290,8 @@ interface AdminContextType {
   data: SiteData;
   isAdmin: boolean;
   setAdmin: (v: boolean) => void;
-  updateHero: (hero: Partial<SiteData['hero']>) => void;
-  updateOverview: (overview: Partial<SiteData['overview']>) => void;
-  updateGallery: (gallery: GalleryImage[]) => void;
-  updateAmenities: (amenities: Partial<SiteData['amenities']>) => void;
-  updatePricing: (pricing: Partial<SiteData['pricing']>) => void;
-  updateSurroundings: (surroundings: Partial<SiteData['surroundings']>) => void;
-  updateReviews: (reviews: Review[]) => void;
-  updateFaq: (faq: FAQ[]) => void;
-  updateContact: (contact: Partial<SiteData['contact']>) => void;
-  updateSeo: (seo: Partial<SiteData['seo']>) => void;
+  updateSection: <K extends keyof SiteData>(section: K, value: Partial<SiteData[K]>) => void;
+  updateFull: <K extends keyof SiteData>(section: K, value: SiteData[K]) => void;
   resetAll: () => void;
 }
 
@@ -167,10 +305,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        setData({ ...defaultData, ...parsed });
-      }
+      if (saved) setData({ ...defaultData, ...JSON.parse(saved) });
       if (sessionStorage.getItem('chata_admin') === 'true') setAdmin(true);
     } catch (e) { console.error(e); }
     setLoaded(true);
@@ -178,35 +313,24 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
   const saveData = (newData: SiteData) => {
     setData(newData);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
-    } catch (e) {
-      console.error('Save error:', e);
-      alert('Chyba ukladania! Skús zmazať staré obrázky.');
-    }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(newData)); }
+    catch (e) { console.error(e); alert('Chyba ukladania! Skús zmazať staré obrázky.'); }
   };
 
-  const updateHero = (hero: Partial<SiteData['hero']>) => saveData({ ...data, hero: { ...data.hero, ...hero } });
-  const updateOverview = (overview: Partial<SiteData['overview']>) => saveData({ ...data, overview: { ...data.overview, ...overview } });
-  const updateGallery = (gallery: GalleryImage[]) => saveData({ ...data, gallery });
-  const updateAmenities = (amenities: Partial<SiteData['amenities']>) => saveData({ ...data, amenities: { ...data.amenities, ...amenities } });
-  const updatePricing = (pricing: Partial<SiteData['pricing']>) => saveData({ ...data, pricing: { ...data.pricing, ...pricing } });
-  const updateSurroundings = (surroundings: Partial<SiteData['surroundings']>) => saveData({ ...data, surroundings: { ...data.surroundings, ...surroundings } });
-  const updateReviews = (reviews: Review[]) => saveData({ ...data, reviews });
-  const updateFaq = (faq: FAQ[]) => saveData({ ...data, faq });
-  const updateContact = (contact: Partial<SiteData['contact']>) => saveData({ ...data, contact: { ...data.contact, ...contact } });
-  const updateSeo = (seo: Partial<SiteData['seo']>) => saveData({ ...data, seo: { ...data.seo, ...seo } });
-  const resetAll = () => { localStorage.removeItem(STORAGE_KEY); setData(defaultData); };
+  const updateSection = <K extends keyof SiteData>(section: K, value: Partial<SiteData[K]>) => {
+    saveData({ ...data, [section]: { ...data[section], ...value } });
+  };
+  
+  const updateFull = <K extends keyof SiteData>(section: K, value: SiteData[K]) => {
+    saveData({ ...data, [section]: value });
+  };
+
+  const resetAll = () => { localStorage.removeItem(STORAGE_KEY); window.location.reload(); };
 
   if (!loaded) return null;
 
   return (
-    <AdminContext.Provider value={{ 
-      data, isAdmin, setAdmin, 
-      updateHero, updateOverview, updateGallery, updateAmenities,
-      updatePricing, updateSurroundings, updateReviews, updateFaq, 
-      updateContact, updateSeo, resetAll 
-    }}>
+    <AdminContext.Provider value={{ data, isAdmin, setAdmin, updateSection, updateFull, resetAll }}>
       {children}
     </AdminContext.Provider>
   );

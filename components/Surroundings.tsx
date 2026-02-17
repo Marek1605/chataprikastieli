@@ -1,47 +1,25 @@
 'use client';
-
-import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { surroundingPlaces } from '@/lib/config';
+import { useAdmin } from '@/lib/AdminContext';
 
 export default function Surroundings() {
-  const t = useTranslations('surroundings');
+  const { data } = useAdmin();
+  const s = data.surroundings;
+  const Img = ({ src, alt }: { src: string; alt: string }) => {
+    if (!src) return <div className="absolute inset-0 bg-cream" />;
+    if (src.startsWith('data:')) return <img src={src} alt={alt} className="absolute inset-0 w-full h-full object-cover" />;
+    return <Image src={src} alt={alt} fill className="object-cover" sizes="25vw" />;
+  };
 
   return (
-    <section id="surroundings" className="py-20 bg-white">
+    <section id="surroundings" className="py-16 bg-white">
       <div className="container-custom">
-        <div className="text-center mb-16">
-          <span className="section-label">{t('label')}</span>
-          <h2 className="section-title">{t('title')}</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {surroundingPlaces.map((place) => (
-            <div
-              key={place.id}
-              className="group bg-cream rounded-xl overflow-hidden hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
-            >
-              <div className="relative aspect-[4/3] bg-gradient-to-br from-wood/20 to-wood/40">
-                <Image
-                  src={place.image}
-                  alt={t(place.titleKey.split('.')[1])}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  sizes="(max-width: 768px) 100vw, 25vw"
-                  loading="lazy"
-                />
-              </div>
-              <div className="p-5">
-                <span className="text-xs font-semibold text-wood uppercase tracking-wider">
-                  {t(place.type.split('.')[1])}
-                </span>
-                <h3 className="font-display text-lg mt-1 mb-2">
-                  {t(place.titleKey.split('.')[1])}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {t(place.descKey.split('.')[1])}
-                </p>
-              </div>
+        <header className="text-center mb-12"><span className="section-label">{s.label}</span><h2 className="section-title">{s.title}</h2></header>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {s.attractions.map(a => (
+            <div key={a.id} className="bg-cream rounded-2xl overflow-hidden shadow-sm">
+              <div className="relative aspect-[4/3] bg-cream"><p className="absolute top-4 left-4 z-10 text-graphite font-medium text-sm">{a.title}</p><Img src={a.image} alt={a.title} /></div>
+              <div className="p-4"><span className="text-xs text-wood font-semibold uppercase">{a.category}</span><h3 className="font-bold text-graphite mt-1">{a.title}</h3><p className="text-gray-600 text-sm mt-2">{a.description}</p></div>
             </div>
           ))}
         </div>
