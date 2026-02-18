@@ -27,15 +27,14 @@ export default function Overview() {
               ))}
             </div>
           </div>
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-cream">
-            {o.image && (
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#d4cfc7]">
+            {o.image ? (
               <img 
                 src={o.image} 
-                alt={o.title} 
+                alt={o.title}
                 className="absolute inset-0 w-full h-full object-cover"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
               />
-            )}
+            ) : null}
           </div>
         </div>
       </div>
