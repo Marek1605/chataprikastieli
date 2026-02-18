@@ -1,21 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useAdmin } from '@/lib/AdminContext';
 
 export default function Navbar() {
   const { data, isAdmin } = useAdmin();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const pathname = usePathname();
   const n = data.nav;
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const scrollTo = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault();
@@ -35,12 +26,11 @@ export default function Navbar() {
     { id: 'contact', label: n.contact },
   ];
 
-  // Admin bar offset
   const topOffset = isAdmin ? 'top-[52px]' : 'top-0';
 
   return (
     <>
-      <nav className={`fixed left-0 right-0 z-[300] transition-all duration-300 ${topOffset} ${isScrolled ? 'bg-white shadow-md' : 'bg-white/95 backdrop-blur-sm'}`}>
+      <nav className={`fixed left-0 right-0 z-[300] bg-white shadow-md ${topOffset}`}>
         <div className="container-custom">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -52,7 +42,7 @@ export default function Navbar() {
             {/* Desktop nav */}
             <div className="hidden lg:flex items-center gap-1">
               {navItems.map(item => (
-                <a
+                
                   key={item.id}
                   href={`#${item.id}`}
                   onClick={scrollTo(item.id)}
@@ -65,14 +55,12 @@ export default function Navbar() {
 
             {/* Right side */}
             <div className="flex items-center gap-3">
-              {/* Language - zatiaľ len SK */}
               <div className="hidden sm:flex items-center gap-1 text-sm text-graphite">
                 <span>🇸🇰</span>
                 <span>SK</span>
               </div>
 
-              {/* CTA button */}
-              <a
+              
                 href="#booking"
                 onClick={scrollTo('booking')}
                 className="px-4 py-2 bg-graphite text-white rounded-lg text-sm font-semibold hover:bg-graphite/90 transition-colors"
@@ -80,7 +68,6 @@ export default function Navbar() {
                 {n.bookNow}
               </a>
 
-              {/* Mobile menu button */}
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
                 className="lg:hidden p-2 text-graphite"
@@ -96,7 +83,7 @@ export default function Navbar() {
           <div className="lg:hidden bg-white border-t shadow-lg">
             <div className="container-custom py-4 space-y-2">
               {navItems.map(item => (
-                <a
+                
                   key={item.id}
                   href={`#${item.id}`}
                   onClick={scrollTo(item.id)}
@@ -110,8 +97,8 @@ export default function Navbar() {
         )}
       </nav>
       
-      {/* Spacer for fixed navbar */}
-      <div className={`h-16 ${isAdmin ? 'mt-[52px]' : ''}`} />
+      {/* Spacer */}
+      <div className="h-16" />
     </>
   );
 }
