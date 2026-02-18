@@ -6,7 +6,7 @@ import AdminSidebar from '@/components/AdminSidebar';
 export default function Providers({ children }: { children: ReactNode }) {
   return (
     <AdminProvider>
-      <div className="pt-[52px]">{children}</div>
+      <div className="">{children}</div>
       <AdminSidebar />
     </AdminProvider>
   );
