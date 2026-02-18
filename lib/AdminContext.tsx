@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-const STORAGE_KEY = 'chata_mega_admin_v1';
+const STORAGE_KEY = 'chata_mega_admin_v2';
 
 interface GalleryImage { id: string; src: string; alt: string; }
 interface Review { id: string; name: string; text: string; rating: number; date: string; }
@@ -11,7 +11,6 @@ interface Attraction { id: string; image: string; category: string; title: strin
 interface BookingLink { id: string; name: string; url: string; }
 
 interface SiteData {
-  // HERO
   hero: {
     title: string;
     subtitle: string;
@@ -22,7 +21,6 @@ interface SiteData {
     cta1: string;
     cta2: string;
   };
-  // OVERVIEW / O CHATE
   overview: {
     label: string;
     title: string;
@@ -30,19 +28,16 @@ interface SiteData {
     features: { id: string; icon: string; title: string; value: string; }[];
     image: string;
   };
-  // GALLERY
   gallery: {
     label: string;
     title: string;
     images: GalleryImage[];
   };
-  // AMENITIES / VYBAVENIE
   amenities: {
     label: string;
     title: string;
     categories: Amenity[];
   };
-  // ATMOSPHERE / ATMOSFÉRA
   atmosphere: {
     label: string;
     title: string;
@@ -53,7 +48,6 @@ interface SiteData {
     text1: string;
     text2: string;
   };
-  // PRICING / CENNÍK
   pricing: {
     label: string;
     title: string;
@@ -65,7 +59,6 @@ interface SiteData {
       week: { name: string; desc: string; nights: number; price: number; };
     };
   };
-  // BOOKING / REZERVÁCIA
   booking: {
     label: string;
     title: string;
@@ -74,25 +67,21 @@ interface SiteData {
     maxGuests: number;
     bookingLinks: BookingLink[];
   };
-  // SURROUNDINGS / OKOLIE
   surroundings: {
     label: string;
     title: string;
     attractions: Attraction[];
   };
-  // REVIEWS / RECENZIE
   reviews: {
     label: string;
     title: string;
     items: Review[];
   };
-  // FAQ
   faq: {
     label: string;
     title: string;
     items: FAQ[];
   };
-  // CONTACT / KONTAKT
   contact: {
     label: string;
     title: string;
@@ -107,7 +96,6 @@ interface SiteData {
     checkOut: string;
     mapLabel: string;
   };
-  // FOOTER
   footer: {
     description: string;
     phone: string;
@@ -119,7 +107,6 @@ interface SiteData {
     termsText: string;
     bookViaText: string;
   };
-  // NAVIGATION
   nav: {
     home: string;
     gallery: string;
@@ -160,7 +147,7 @@ const defaultData: SiteData = {
       { id: '3', icon: '🚿', title: 'Kúpeľne', value: '2' },
       { id: '4', icon: '📐', title: 'Plocha', value: '120m²' },
     ],
-    image: '/assets/overview.jpg',
+    image: '/assets/gallery-1.jpg',
   },
   gallery: {
     label: 'FOTOGALÉRIA',
@@ -170,8 +157,6 @@ const defaultData: SiteData = {
       { id: '2', src: '/assets/gallery-2.jpg', alt: 'Obývačka' },
       { id: '3', src: '/assets/gallery-3.jpg', alt: 'Spálňa' },
       { id: '4', src: '/assets/gallery-4.jpg', alt: 'Kuchyňa' },
-      { id: '5', src: '/assets/surrounding-2.jpg', alt: 'Okolie' },
-      { id: '6', src: '/assets/surrounding-3.jpg', alt: 'Príroda' },
     ],
   },
   amenities: {
@@ -180,19 +165,19 @@ const defaultData: SiteData = {
     categories: [
       { id: '1', icon: '🍳', title: 'Plne vybavená kuchyňa', items: ['Indukčná varná doska', 'Prémiový kávovar', 'Veľká chladnička', 'Mikrovlnná rúra', 'Kompletný riad pre 6 osôb'] },
       { id: '2', icon: '🚿', title: 'Moderná kúpeľňa', items: ['Priestranný sprchový kút', 'Prémiová kozmetika', 'Profesionálny fén', 'Mäkké uteráky', 'Podlahové kúrenie'] },
-      { id: '3', icon: '🛏️', title: 'Pohodlná spálňa', items: ['Kvalitné postele s ortopedickými matracmi', 'Luxusné bavlnené obliečky', 'Zatemňovacie závesy', 'Priestranné úložné priestory', 'Nočné stolíky s USB nabíjačkami'] },
-      { id: '4', icon: '🛋️', title: 'Útulná obývačka', items: ['Pohodlná rozkladacia sedačka', '55" Smart TV s Netflixom', 'Bluetooth reproduktor', 'Výber stolových hier', 'Panoramatický výhľad na hory'] },
-      { id: '5', icon: '🌲', title: 'Súkromný exteriér', items: ['Priestranná terasa so sedením', 'Záhradný nábytok', 'Súkromné parkovanie', 'Plynový gril Weber', 'Upravená záhrada'] },
-      { id: '6', icon: '🎿', title: 'Zážitky v okolí', items: ['Turistické chodníky', 'Cyklotrasy', 'Lyžiarske strediská', 'Historické pamiatky', 'Wellness centrá'] },
+      { id: '3', icon: '🛏️', title: 'Pohodlná spálňa', items: ['Kvalitné postele s ortopedickými matracmi', 'Luxusné bavlnené obliečky', 'Zatemňovacie závesy', 'Priestranné úložné priestory'] },
+      { id: '4', icon: '🛋️', title: 'Útulná obývačka', items: ['Pohodlná rozkladacia sedačka', '55" Smart TV s Netflixom', 'Bluetooth reproduktor', 'Výber stolových hier'] },
+      { id: '5', icon: '🌲', title: 'Súkromný exteriér', items: ['Priestranná terasa so sedením', 'Záhradný nábytok', 'Súkromné parkovanie', 'Plynový gril Weber'] },
+      { id: '6', icon: '🎿', title: 'Zážitky v okolí', items: ['Turistické chodníky', 'Cyklotrasy', 'Lyžiarske strediská', 'Historické pamiatky'] },
     ],
   },
   atmosphere: {
     label: 'ATMOSFÉRA',
     title: 'Každý moment má svoju krásu',
     morningTitle: 'Ranná atmosféra',
-    morningImage: '/assets/morning.jpg',
+    morningImage: '/assets/gallery-2.jpg',
     eveningTitle: 'Večerná atmosféra',
-    eveningImage: '/assets/evening.jpg',
+    eveningImage: '/assets/gallery-3.jpg',
     text1: 'Ráno vás zobudí jemné svetlo prenikajúce cez okná s výhľadom na hory.',
     text2: 'Večer si vychutnajte západ slnka z terasy s pohárom vína.',
   },
@@ -210,7 +195,7 @@ const defaultData: SiteData = {
   booking: {
     label: 'REZERVÁCIA',
     title: 'Vyberte si termín',
-    pricePerNight: 85,
+    pricePerNight: 100,
     minNights: 2,
     maxGuests: 8,
     bookingLinks: [
@@ -262,7 +247,7 @@ const defaultData: SiteData = {
     mapLabel: 'Nájdite nás',
   },
   footer: {
-    description: 'Luxusná horská chata v Turci s výhľadom na Malú Fatru. Ideálne miesto pre romantický víkend, rodinnú dovolenku alebo pracovný retreat.',
+    description: 'Luxusná horská chata v Turci s výhľadom na Malú Fatru.',
     phone: '+421 915 327 597',
     email: 'info@chataprikastieli.sk',
     location: 'Necpaly, Turiec, Slovensko',
@@ -291,7 +276,6 @@ interface AdminContextType {
   isAdmin: boolean;
   setAdmin: (v: boolean) => void;
   updateSection: <K extends keyof SiteData>(section: K, value: Partial<SiteData[K]>) => void;
-  updateFull: <K extends keyof SiteData>(section: K, value: SiteData[K]) => void;
   resetAll: () => void;
 }
 
@@ -305,32 +289,39 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) setData({ ...defaultData, ...JSON.parse(saved) });
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setData(prev => ({ ...prev, ...parsed }));
+      }
       if (sessionStorage.getItem('chata_admin') === 'true') setAdmin(true);
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error('Load error:', e); }
     setLoaded(true);
   }, []);
 
   const saveData = (newData: SiteData) => {
     setData(newData);
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(newData)); }
-    catch (e) { console.error(e); alert('Chyba ukladania! Skús zmazať staré obrázky.'); }
+    try { 
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newData)); 
+    } catch (e) { 
+      console.error('Save error:', e); 
+      alert('Chyba ukladania!'); 
+    }
   };
 
   const updateSection = <K extends keyof SiteData>(section: K, value: Partial<SiteData[K]>) => {
-    saveData({ ...data, [section]: { ...data[section], ...value } });
-  };
-  
-  const updateFull = <K extends keyof SiteData>(section: K, value: SiteData[K]) => {
-    saveData({ ...data, [section]: value });
+    const newData = { ...data, [section]: { ...data[section], ...value } };
+    saveData(newData);
   };
 
-  const resetAll = () => { localStorage.removeItem(STORAGE_KEY); window.location.reload(); };
+  const resetAll = () => { 
+    localStorage.removeItem(STORAGE_KEY); 
+    window.location.reload(); 
+  };
 
   if (!loaded) return null;
 
   return (
-    <AdminContext.Provider value={{ data, isAdmin, setAdmin, updateSection, updateFull, resetAll }}>
+    <AdminContext.Provider value={{ data, isAdmin, setAdmin, updateSection, resetAll }}>
       {children}
     </AdminContext.Provider>
   );
@@ -341,3 +332,6 @@ export function useAdmin() {
   if (!ctx) throw new Error('useAdmin must be inside AdminProvider');
   return ctx;
 }
+
+export { defaultData };
+export type { SiteData };

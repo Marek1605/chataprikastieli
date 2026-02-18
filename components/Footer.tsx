@@ -47,7 +47,11 @@ export default function Footer() {
             </ul>
             <p className="mt-4 text-xs text-gray-400">{f.bookViaText}</p>
             <div className="flex gap-2 mt-2">
-              {b.bookingLinks.map(l => <a key={l.id} href={l.url} target="_blank" rel="noopener" className="px-3 py-1 bg-white/10 rounded text-sm hover:bg-white/20">{l.name}</a>)}
+              {b.bookingLinks.map(l => (
+                <a key={l.id} href={l.url} target="_blank" rel="noopener" className="px-3 py-1 bg-white/10 rounded text-sm hover:bg-white/20">
+                  {l.name}
+                </a>
+              ))}
             </div>
           </div>
         </div>

@@ -1,16 +1,17 @@
 'use client';
-import Image from 'next/image';
 import { useAdmin } from '@/lib/AdminContext';
 
 export default function Overview() {
   const { data } = useAdmin();
   const o = data.overview;
-  const isB64 = o.image.startsWith('data:');
 
   return (
     <section id="overview" className="py-16 bg-white">
       <div className="container-custom">
-        <header className="text-center mb-12"><span className="section-label">{o.label}</span><h2 className="section-title">{o.title}</h2></header>
+        <header className="text-center mb-12">
+          <span className="section-label">{o.label}</span>
+          <h2 className="section-title">{o.title}</h2>
+        </header>
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <p className="text-gray-600 text-lg mb-8">{o.description}</p>
@@ -18,13 +19,23 @@ export default function Overview() {
               {o.features.map(f => (
                 <div key={f.id} className="flex items-center gap-3 p-4 bg-cream rounded-xl">
                   <span className="text-2xl">{f.icon}</span>
-                  <div><p className="text-2xl font-bold text-graphite">{f.value}</p><p className="text-sm text-gray-500">{f.title}</p></div>
+                  <div>
+                    <p className="text-2xl font-bold text-graphite">{f.value}</p>
+                    <p className="text-sm text-gray-500">{f.title}</p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
-            {isB64 ? <img src={o.image} alt="" className="absolute inset-0 w-full h-full object-cover" /> : <Image src={o.image} alt="" fill className="object-cover" sizes="50vw" />}
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-cream">
+            {o.image && (
+              <img 
+                src={o.image} 
+                alt={o.title} 
+                className="absolute inset-0 w-full h-full object-cover"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              />
+            )}
           </div>
         </div>
       </div>
