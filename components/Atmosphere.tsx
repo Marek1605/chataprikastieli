@@ -18,27 +18,27 @@ export default function Atmosphere() {
             <p className="text-gray-600 text-lg">{a.text2}</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            {/* Ranná atmosféra */}
-            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#d4cfc7]">
-              <p className="absolute top-4 left-4 z-20 text-graphite font-medium bg-white/80 px-2 py-1 rounded text-sm">{a.morningTitle}</p>
-              {a.morningImage ? (
+            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#e8e4dc]">
+              <p className="absolute top-4 left-4 z-10 text-graphite font-medium bg-white/80 px-2 py-1 rounded">{a.morningTitle}</p>
+              {a.morningImage && (
                 <img 
                   src={a.morningImage} 
-                  alt={a.morningTitle}
-                  className="absolute inset-0 w-full h-full object-cover z-10"
+                  alt={a.morningTitle} 
+                  className="absolute inset-0 w-full h-full object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
-              ) : null}
+              )}
             </div>
-            {/* Večerná atmosféra */}
-            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#d4cfc7] mt-8">
-              <p className="absolute top-4 left-4 z-20 text-graphite font-medium bg-white/80 px-2 py-1 rounded text-sm">{a.eveningTitle}</p>
-              {a.eveningImage ? (
+            <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#e8e4dc] mt-8">
+              <p className="absolute top-4 left-4 z-10 text-graphite font-medium bg-white/80 px-2 py-1 rounded">{a.eveningTitle}</p>
+              {a.eveningImage && (
                 <img 
                   src={a.eveningImage} 
-                  alt={a.eveningTitle}
-                  className="absolute inset-0 w-full h-full object-cover z-10"
+                  alt={a.eveningTitle} 
+                  className="absolute inset-0 w-full h-full object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
-              ) : null}
+              )}
             </div>
           </div>
         </div>

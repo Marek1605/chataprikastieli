@@ -15,15 +15,18 @@ export default function Surroundings() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {s.attractions.map(a => (
             <div key={a.id} className="bg-cream rounded-2xl overflow-hidden shadow-sm">
+              {/* Obrázok BEZ textu */}
               <div className="relative aspect-[4/3] bg-[#d4cfc7]">
-                {a.image ? (
+                {a.image && (
                   <img 
                     src={a.image} 
-                    alt={a.title}
+                    alt={a.title} 
                     className="absolute inset-0 w-full h-full object-cover"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
-                ) : null}
+                )}
               </div>
+              {/* Text pod obrázkom */}
               <div className="p-4">
                 <span className="text-xs text-wood font-semibold uppercase">{a.category}</span>
                 <h3 className="font-bold text-graphite mt-1">{a.title}</h3>
