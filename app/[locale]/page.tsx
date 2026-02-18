@@ -1,7 +1,6 @@
 import Navigation from '@/components/Navigation';
 import Hero from '@/components/Hero';
 import Overview from '@/components/Overview';
-import WhyUs from '@/components/WhyUs';
 import Gallery from '@/components/Gallery';
 import Amenities from '@/components/Amenities';
 import Experience from '@/components/Experience';
@@ -23,7 +22,6 @@ export default async function HomePage() {
       <Navigation />
       <Hero />
       <Overview />
-      <WhyUs />
       <Gallery />
       <Amenities />
       <Experience />
