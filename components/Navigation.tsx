@@ -41,12 +41,12 @@ export default function Navigation() {
   const getText = (key: string): string => {
     try {
       const result = t(key);
-      if (result.includes('.') || result === key) {
-        return data.nav[key as keyof typeof data.nav] || fallbackNav[key] || key;
+      if (result.includes('MISSING') || result.includes('.') || result === key) {
+        return data?.nav?.[key as keyof typeof data.nav] || fallbackNav[key] || key;
       }
       return result;
     } catch {
-      return data.nav[key as keyof typeof data.nav] || fallbackNav[key] || key;
+      return data?.nav?.[key as keyof typeof data.nav] || fallbackNav[key] || key;
     }
   };
 

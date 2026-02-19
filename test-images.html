@@ -1,0 +1,36 @@
+<html>
+<body>
+<h1>Test obrazkov</h1>
+<script>
+const data = localStorage.getItem('chata_mega_admin_v2');
+if (data) {
+  const parsed = JSON.parse(data);
+  console.log('Velkost localStorage:', (data.length / 1024).toFixed(2), 'KB');
+  
+  // Test atmosphere
+  if (parsed.atmosphere?.morningImage) {
+    console.log('Morning image length:', parsed.atmosphere.morningImage.length);
+    const img = document.createElement('img');
+    img.src = parsed.atmosphere.morningImage;
+    img.style.maxWidth = '200px';
+    img.onerror = () => console.error('Morning image FAILED');
+    img.onload = () => console.log('Morning image OK');
+    document.body.appendChild(img);
+  }
+  
+  // Test gallery
+  if (parsed.gallery?.images?.[0]?.src) {
+    console.log('Gallery[0] length:', parsed.gallery.images[0].src.length);
+    const img2 = document.createElement('img');
+    img2.src = parsed.gallery.images[0].src;
+    img2.style.maxWidth = '200px';
+    img2.onerror = () => console.error('Gallery image FAILED');
+    img2.onload = () => console.log('Gallery image OK');
+    document.body.appendChild(img2);
+  }
+} else {
+  console.log('No data in localStorage');
+}
+</script>
+</body>
+</html>
