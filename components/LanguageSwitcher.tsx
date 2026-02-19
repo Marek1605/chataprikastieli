@@ -1,9 +1,9 @@
 'use client';
+import { locales, type Locale } from '@/i18n/routing';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from '@/i18n/routing';
-import { locales, type Locale } from '@/i18n/routing';
+import { useRouter, usePathname } from '@/lib/navigation';
 
 // Language metadata
 const LANG_META: Record<Locale, { flag: string; label: string; nativeName: string }> = {

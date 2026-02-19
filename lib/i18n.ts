@@ -1,3 +1,1 @@
-// Re-export from the canonical i18n location for backward compatibility
-// Components that import from '@/lib/i18n' will continue to work
 export { locales, defaultLocale, type Locale } from '@/i18n/routing';
