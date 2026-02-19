@@ -1,10 +1,2 @@
-import { createNavigation } from 'next-intl/navigation';
-import { locales, defaultLocale } from './i18n';
-
-export const localePrefix = 'as-needed' as const;
-
-export const { Link, redirect, usePathname, useRouter } = createNavigation({
-  locales,
-  defaultLocale,
-  localePrefix,
-});
+// Re-export navigation utilities from the canonical i18n location
+export { Link, redirect, usePathname, useRouter, getPathname } from '@/i18n/routing';
