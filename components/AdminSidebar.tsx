@@ -24,7 +24,7 @@ export default function AdminSidebar() {
   const logout = () => { sessionStorage.removeItem('chata_admin'); setAdmin(false); setShowPanel(false); };
 
   // Kompresia obrázkov - menšie súbory
-  const compress = useCallback((file: File, maxW = 500, q = 0.5): Promise<string> => {
+  const compress = useCallback((file: File, maxW = 800, q = 0.7): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
