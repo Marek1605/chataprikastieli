@@ -28,7 +28,7 @@ const fallbackNav: Record<string, string> = {
 };
 
 export default function Navigation() {
-  const t = useTranslations('nav');
+  
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
@@ -96,15 +96,15 @@ export default function Navigation() {
   }, [router, pathname]);
 
   const navItems = [
-    { id: 'hero', label: getText('home') },
-    { id: 'gallery', label: getText('gallery') },
-    { id: 'amenities', label: getText('amenities') },
-    { id: 'booking', label: getText('booking') },
-    { id: 'pricing', label: getText('pricing') },
-    { id: 'surroundings', label: getText('surroundings') },
-    { id: 'reviews', label: getText('reviews') },
-    { id: 'faq', label: getText('faq') },
-    { id: 'contact', label: getText('contact') },
+    { id: 'hero', label: getTexdata.nav.home },
+    { id: 'gallery', label: getTexdata.nav.gallery },
+    { id: 'amenities', label: getTexdata.nav.amenities },
+    { id: 'booking', label: getTexdata.nav.booking },
+    { id: 'pricing', label: getTexdata.nav.pricing },
+    { id: 'surroundings', label: getTexdata.nav.surroundings },
+    { id: 'reviews', label: getTexdata.nav.reviews },
+    { id: 'faq', label: getTexdata.nav.faq },
+    { id: 'contact', label: getTexdata.nav.contact },
   ];
 
   const currentLang = languageConfig[locale] || languageConfig.sk;
@@ -171,7 +171,7 @@ export default function Navigation() {
               onClick={() => scrollToSection('booking')}
               className="px-4 py-2 bg-graphite text-white rounded-lg text-sm font-semibold hover:bg-graphite/90 transition-colors shadow-md"
             >
-              {getText('bookNow')}
+              {getTexdata.nav.bookNow}
             </button>
 
             <button
