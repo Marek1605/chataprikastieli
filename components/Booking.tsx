@@ -22,7 +22,7 @@ export default function Booking() {
   const { data: adminData } = useAdmin();
 
   // CENA Z ADMIN PANELU
-  const pricePerNight = adminData?.booking?.pricePerNight || pricingConfig?.basePrice || 100;
+  const pricePerNight = adminData?.booking?.pricePerNight || 100;
   const adminMinNights = adminData?.booking?.minNights || 2;
 
   const [bookedDates, setBookedDates] = useState<string[]>([]);
