@@ -19,23 +19,23 @@ export default function Atmosphere() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#e8e4dc]">
-              <p className="absolute top-4 left-4 z-10 text-graphite font-medium bg-white/80 px-2 py-1 rounded">{a.morningTitle}</p>
+              <p className="absolute top-4 left-4 z-20 text-graphite font-medium bg-white/90 px-3 py-1 rounded text-sm shadow">{a.morningTitle}</p>
               {a.morningImage && (
                 <img 
                   src={a.morningImage} 
                   alt={a.morningTitle} 
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover z-10"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
               )}
             </div>
             <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#e8e4dc] mt-8">
-              <p className="absolute top-4 left-4 z-10 text-graphite font-medium bg-white/80 px-2 py-1 rounded">{a.eveningTitle}</p>
+              <p className="absolute top-4 left-4 z-20 text-graphite font-medium bg-white/90 px-3 py-1 rounded text-sm shadow">{a.eveningTitle}</p>
               {a.eveningImage && (
                 <img 
                   src={a.eveningImage} 
                   alt={a.eveningTitle} 
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover z-10"
                   onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                 />
               )}

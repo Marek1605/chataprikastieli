@@ -14,8 +14,8 @@ export default function Surroundings() {
         </header>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {s.attractions.map(a => (
-            <div key={a.id} className="bg-cream rounded-2xl overflow-hidden shadow-sm">
-              {/* Obrázok BEZ textu */}
+            <div key={a.id} className="bg-cream rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+              {/* Obrazok CISTY bez textu */}
               <div className="relative aspect-[4/3] bg-[#d4cfc7]">
                 {a.image && (
                   <img 
@@ -26,11 +26,11 @@ export default function Surroundings() {
                   />
                 )}
               </div>
-              {/* Text pod obrázkom */}
+              {/* Text pod obrazkom */}
               <div className="p-4">
-                <span className="text-xs text-wood font-semibold uppercase">{a.category}</span>
-                <h3 className="font-bold text-graphite mt-1">{a.title}</h3>
-                <p className="text-gray-600 text-sm mt-2">{a.description}</p>
+                <span className="text-xs text-wood font-semibold uppercase tracking-wide">{a.category}</span>
+                <h3 className="font-bold text-graphite mt-1 text-lg">{a.title}</h3>
+                <p className="text-gray-600 text-sm mt-2 line-clamp-2">{a.description}</p>
               </div>
             </div>
           ))}
