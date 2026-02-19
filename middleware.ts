@@ -1,16 +1,13 @@
 import createMiddleware from 'next-intl/middleware';
-import { routing } from '@/i18n/routing';
+import { locales, defaultLocale } from '@/lib/i18n';
 
-export default createMiddleware(routing);
+export default createMiddleware({
+  locales,
+  defaultLocale,
+  localePrefix: 'as-needed',
+  localeDetection: true,
+});
 
 export const config = {
-  // Match all paths except Next.js internals, API routes, and static files
-  matcher: [
-    // Match root
-    '/',
-    // Match locale-prefixed paths
-    '/(sk|en|cs|pl)/:path*',
-    // Match all paths except internals
-    '/((?!api|_next|_vercel|admin|uploads|assets|favicon\\.ico|robots\\.txt|sitemap\\.xml|.*\\..*).*)',
-  ],
+  matcher: ['/', '/(sk|en|cs|pl)/:path*', '/((?!api|_next|_vercel|.*\\..*).*)'],
 };
