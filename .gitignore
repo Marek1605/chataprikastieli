@@ -4,3 +4,4 @@ node_modules/
 .env.local
 data/site-content-backup-*.json
 public/uploads/*
+chata-i18n-fix.zip
