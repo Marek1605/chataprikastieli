@@ -1,5 +1,6 @@
 'use client';
 import { useAdmin } from '@/lib/AdminContext';
+import SafeImage from '@/components/SafeImage';
 
 export default function Atmosphere() {
   const { data } = useAdmin();
@@ -20,20 +21,20 @@ export default function Atmosphere() {
           <div className="grid grid-cols-2 gap-4">
             <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#e8e4dc]">
               <p className="absolute top-4 left-4 z-20 text-graphite font-medium bg-white/90 px-3 py-1 rounded text-sm shadow">{a.morningTitle}</p>
-              <img 
-                src={a.morningImage || '/assets/gallery-2.jpg'} 
+              <SafeImage 
+                src={a.morningImage} 
                 alt={a.morningTitle}
+                fallback="/assets/gallery-2.jpg"
                 className="absolute inset-0 w-full h-full object-cover z-10"
-                onError={(e) => { (e.target as HTMLImageElement).src = '/assets/gallery-2.jpg'; }}
               />
             </div>
             <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#e8e4dc] mt-8">
               <p className="absolute top-4 left-4 z-20 text-graphite font-medium bg-white/90 px-3 py-1 rounded text-sm shadow">{a.eveningTitle}</p>
-              <img 
-                src={a.eveningImage || '/assets/gallery-3.jpg'} 
+              <SafeImage 
+                src={a.eveningImage} 
                 alt={a.eveningTitle}
+                fallback="/assets/gallery-3.jpg"
                 className="absolute inset-0 w-full h-full object-cover z-10"
-                onError={(e) => { (e.target as HTMLImageElement).src = '/assets/gallery-3.jpg'; }}
               />
             </div>
           </div>

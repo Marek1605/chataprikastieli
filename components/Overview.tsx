@@ -1,5 +1,6 @@
 'use client';
 import { useAdmin } from '@/lib/AdminContext';
+import SafeImage from '@/components/SafeImage';
 
 export default function Overview() {
   const { data } = useAdmin();
@@ -28,11 +29,11 @@ export default function Overview() {
             </div>
           </div>
           <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-cream">
-            <img
-              src={o.image || '/assets/gallery-1.jpg'}
+            <SafeImage
+              src={o.image}
               alt={o.title}
+              fallback="/assets/gallery-1.jpg"
               className="absolute inset-0 w-full h-full object-cover"
-              onError={(e) => { (e.target as HTMLImageElement).src = '/assets/gallery-1.jpg'; }}
             />
           </div>
         </div>

@@ -1,5 +1,6 @@
 'use client';
 import { useAdmin } from '@/lib/AdminContext';
+import SafeImage from '@/components/SafeImage';
 
 export default function Surroundings() {
   const { data } = useAdmin();
@@ -15,19 +16,19 @@ export default function Surroundings() {
         </header>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {s.attractions.map((a, i) => (
-            <div key={a.id} className="bg-cream rounded-2xl overflow-hidden shadow-sm">
+            <div key={a.id} className="bg-cream rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
               <div className="relative aspect-[4/3] bg-[#d4cfc7]">
-                <img 
-                  src={a.image || fallbacks[i % 4]} 
+                <SafeImage 
+                  src={a.image} 
                   alt={a.title}
+                  fallback={fallbacks[i % fallbacks.length]}
                   className="absolute inset-0 w-full h-full object-cover"
-                  onError={(e) => { (e.target as HTMLImageElement).src = fallbacks[i % 4]; }}
                 />
               </div>
               <div className="p-4">
-                <span className="text-xs text-wood font-semibold uppercase">{a.category}</span>
-                <h3 className="font-bold text-graphite mt-1">{a.title}</h3>
-                <p className="text-gray-600 text-sm mt-2">{a.description}</p>
+                <span className="text-xs text-wood font-semibold uppercase tracking-wide">{a.category}</span>
+                <h3 className="font-bold text-graphite mt-1 text-lg">{a.title}</h3>
+                <p className="text-gray-600 text-sm mt-2 line-clamp-2">{a.description}</p>
               </div>
             </div>
           ))}
