@@ -314,7 +314,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     setSaving(true);
     try {
       const res = await fetch('/api/admin-content', {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'x-admin-token': ADMIN_PASSWORD,
