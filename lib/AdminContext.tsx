@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 
 const ADMIN_PASSWORD = 'ChataAdmin2025!';
 
@@ -12,47 +12,25 @@ interface BookingLink { id: string; name: string; url: string; }
 
 interface SiteData {
   hero: {
-    title: string;
-    subtitle: string;
-    backgroundImage: string;
+    title: string; subtitle: string; backgroundImage: string;
     badges: { icon: string; text: string; }[];
-    rating: string;
-    ratingText: string;
-    cta1: string;
-    cta2: string;
+    rating: string; ratingText: string; cta1: string; cta2: string;
   };
   overview: {
-    label: string;
-    title: string;
-    description: string;
+    label: string; title: string; description: string;
     features: { id: string; icon: string; title: string; value: string; }[];
     image: string;
   };
-  gallery: {
-    label: string;
-    title: string;
-    images: GalleryImage[];
-  };
-  amenities: {
-    label: string;
-    title: string;
-    categories: Amenity[];
-  };
+  gallery: { label: string; title: string; images: GalleryImage[]; };
+  amenities: { label: string; title: string; categories: Amenity[]; };
   atmosphere: {
-    label: string;
-    title: string;
-    morningTitle: string;
-    morningImage: string;
-    eveningTitle: string;
-    eveningImage: string;
-    text1: string;
-    text2: string;
+    label: string; title: string;
+    morningTitle: string; morningImage: string;
+    eveningTitle: string; eveningImage: string;
+    text1: string; text2: string;
   };
   pricing: {
-    label: string;
-    title: string;
-    popularText: string;
-    ctaText: string;
+    label: string; title: string; popularText: string; ctaText: string;
     packages: {
       weekend: { name: string; desc: string; nights: number; price: number; };
       reset: { name: string; desc: string; nights: number; price: number; };
@@ -60,64 +38,26 @@ interface SiteData {
     };
   };
   booking: {
-    label: string;
-    title: string;
-    pricePerNight: number;
-    minNights: number;
-    maxGuests: number;
-    bookingLinks: BookingLink[];
+    label: string; title: string; pricePerNight: number; minNights: number;
+    maxGuests: number; bookingLinks: BookingLink[];
   };
-  surroundings: {
-    label: string;
-    title: string;
-    attractions: Attraction[];
-  };
-  reviews: {
-    label: string;
-    title: string;
-    items: Review[];
-  };
-  faq: {
-    label: string;
-    title: string;
-    items: FAQ[];
-  };
+  surroundings: { label: string; title: string; attractions: Attraction[]; };
+  reviews: { label: string; title: string; items: Review[]; };
+  faq: { label: string; title: string; items: FAQ[]; };
   contact: {
-    label: string;
-    title: string;
-    addressLabel: string;
-    address: string;
-    phoneLabel: string;
-    phone: string;
-    emailLabel: string;
-    email: string;
-    hoursLabel: string;
-    checkIn: string;
-    checkOut: string;
-    mapLabel: string;
+    label: string; title: string; addressLabel: string; address: string;
+    phoneLabel: string; phone: string; emailLabel: string; email: string;
+    hoursLabel: string; checkIn: string; checkOut: string; mapLabel: string;
   };
   footer: {
-    description: string;
-    phone: string;
-    email: string;
-    location: string;
-    copyright: string;
-    madeWith: string;
-    privacyText: string;
-    termsText: string;
+    description: string; phone: string; email: string; location: string;
+    copyright: string; madeWith: string; privacyText: string; termsText: string;
     bookViaText: string;
   };
   nav: {
-    home: string;
-    gallery: string;
-    amenities: string;
-    booking: string;
-    pricing: string;
-    surroundings: string;
-    reviews: string;
-    faq: string;
-    contact: string;
-    bookNow: string;
+    home: string; gallery: string; amenities: string; booking: string;
+    pricing: string; surroundings: string; reviews: string; faq: string;
+    contact: string; bookNow: string;
   };
 }
 
@@ -127,19 +67,14 @@ const defaultData: SiteData = {
     subtitle: 'Luxusna horska chata s panoramatickym vyhladom na Malu Fatru.',
     backgroundImage: '/assets/hero.jpg',
     badges: [
-      { icon: '🔒', text: 'Sukromie' },
-      { icon: '🏔️', text: 'Vyhlad' },
-      { icon: '🤫', text: 'Klud' },
-      { icon: '🔑', text: 'Self check-in' },
+      { icon: '🔒', text: 'Sukromie' }, { icon: '🏔️', text: 'Vyhlad' },
+      { icon: '🤫', text: 'Klud' }, { icon: '🔑', text: 'Self check-in' },
     ],
-    rating: '4.9/5',
-    ratingText: 'Hostia sa vracaju',
-    cta1: 'Rezervovat pobyt',
-    cta2: 'Overit dostupnost',
+    rating: '4.9/5', ratingText: 'Hostia sa vracaju',
+    cta1: 'Rezervovat pobyt', cta2: 'Overit dostupnost',
   },
   overview: {
-    label: 'O CHATE',
-    title: 'Vas horsky unik',
+    label: 'O CHATE', title: 'Vas horsky unik',
     description: 'Moderna chata s tradicnym duchom, kde sa stretava komfort s prirodou.',
     features: [
       { id: '1', icon: '🛏️', title: 'Spalne', value: '3' },
@@ -150,8 +85,7 @@ const defaultData: SiteData = {
     image: '/assets/gallery-1.jpg',
   },
   gallery: {
-    label: 'FOTOGALERIA',
-    title: 'Nahliadnite dovnutra',
+    label: 'FOTOGALERIA', title: 'Nahliadnite dovnutra',
     images: [
       { id: '1', src: '/assets/gallery-1.jpg', alt: 'Interier' },
       { id: '2', src: '/assets/gallery-2.jpg', alt: 'Obyvacka' },
@@ -160,8 +94,7 @@ const defaultData: SiteData = {
     ],
   },
   amenities: {
-    label: 'VYBAVENIE CHATY',
-    title: 'Vsetko pre vas komfort',
+    label: 'VYBAVENIE CHATY', title: 'Vsetko pre vas komfort',
     categories: [
       { id: '1', icon: '🍳', title: 'Kuchyna', items: ['Indukcna varna doska', 'Kavovar', 'Chladnicka'] },
       { id: '2', icon: '🚿', title: 'Kupelna', items: ['Sprchovy kut', 'Kozmetika', 'Fen'] },
@@ -172,20 +105,15 @@ const defaultData: SiteData = {
     ],
   },
   atmosphere: {
-    label: 'ATMOSFERA',
-    title: 'Kazdy moment ma svoju krasu',
-    morningTitle: 'Ranna atmosfera',
-    morningImage: '/assets/gallery-2.jpg',
-    eveningTitle: 'Vecerna atmosfera',
-    eveningImage: '/assets/gallery-3.jpg',
+    label: 'ATMOSFERA', title: 'Kazdy moment ma svoju krasu',
+    morningTitle: 'Ranna atmosfera', morningImage: '/assets/gallery-2.jpg',
+    eveningTitle: 'Vecerna atmosfera', eveningImage: '/assets/gallery-3.jpg',
     text1: 'Rano vas zobudi jemne svetlo prenikajuce cez okna s vyhladom na hory.',
     text2: 'Vecer si vychutnajte zapad slnka z terasy s poharom vina.',
   },
   pricing: {
-    label: 'CENNIK',
-    title: 'Vyberte si idealny pobyt',
-    popularText: 'Najpopularnejsi',
-    ctaText: 'Chcem tento pobyt',
+    label: 'CENNIK', title: 'Vyberte si idealny pobyt',
+    popularText: 'Najpopularnejsi', ctaText: 'Chcem tento pobyt',
     packages: {
       weekend: { name: 'Vikendovy pobyt', desc: 'Piatok - Nedela', nights: 2, price: 200 },
       reset: { name: 'Reset pobyt', desc: 'Idealny kratky unik', nights: 3, price: 300 },
@@ -193,19 +121,15 @@ const defaultData: SiteData = {
     },
   },
   booking: {
-    label: 'REZERVACIA',
-    title: 'Vyberte si termin',
-    pricePerNight: 100,
-    minNights: 2,
-    maxGuests: 8,
+    label: 'REZERVACIA', title: 'Vyberte si termin',
+    pricePerNight: 100, minNights: 2, maxGuests: 8,
     bookingLinks: [
       { id: '1', name: 'Airbnb', url: 'https://airbnb.com' },
       { id: '2', name: 'Booking.com', url: 'https://booking.com' },
     ],
   },
   surroundings: {
-    label: 'OKOLIE A ATRAKCIE',
-    title: 'Objavte krasu Turca',
+    label: 'OKOLIE A ATRAKCIE', title: 'Objavte krasu Turca',
     attractions: [
       { id: '1', image: '/assets/surrounding-1.jpg', category: 'PRIRODA', title: 'Necpalska dolina', description: 'Krasna prirodna dolina.' },
       { id: '2', image: '/assets/surrounding-2.jpg', category: 'VYLET', title: 'Ploska & Borisov', description: 'Popularne vrcholy.' },
@@ -214,57 +138,37 @@ const defaultData: SiteData = {
     ],
   },
   reviews: {
-    label: 'RECENZIE',
-    title: 'Co hovoria hostia',
+    label: 'RECENZIE', title: 'Co hovoria hostia',
     items: [
       { id: '1', name: 'Jana K.', text: 'Nadherne miesto!', rating: 5, date: '2024-10' },
       { id: '2', name: 'Peter M.', text: 'Super vyhlad!', rating: 5, date: '2024-09' },
     ],
   },
   faq: {
-    label: 'FAQ',
-    title: 'Casto kladene otazky',
+    label: 'FAQ', title: 'Casto kladene otazky',
     items: [
       { id: '1', question: 'Aky je cas prichodu?', answer: 'Check-in od 15:00, check-out do 10:00.' },
       { id: '2', question: 'Je parkovanie?', answer: 'Ano, bezplatne pre 2 auta.' },
     ],
   },
   contact: {
-    label: 'KONTAKT',
-    title: 'Kontaktujte nas',
-    addressLabel: 'Adresa',
-    address: 'Necpaly 90, 038 12',
-    phoneLabel: 'Telefon',
-    phone: '+421 915 327 597',
-    emailLabel: 'Email',
-    email: 'chataprikastieli@gmail.com',
-    hoursLabel: 'Casy',
-    checkIn: '15:00',
-    checkOut: '10:00',
-    mapLabel: 'Najdite nas',
+    label: 'KONTAKT', title: 'Kontaktujte nas',
+    addressLabel: 'Adresa', address: 'Necpaly 90, 038 12',
+    phoneLabel: 'Telefon', phone: '+421 915 327 597',
+    emailLabel: 'Email', email: 'chataprikastieli@gmail.com',
+    hoursLabel: 'Casy', checkIn: '15:00', checkOut: '10:00', mapLabel: 'Najdite nas',
   },
   footer: {
     description: 'Luxusna horska chata v Turci.',
-    phone: '+421 915 327 597',
-    email: 'info@chataprikastieli.sk',
-    location: 'Necpaly, Turiec',
-    copyright: '2026 Chata pri Kastieli',
-    madeWith: 'Made with love',
-    privacyText: 'Ochrana sukromia',
-    termsText: 'Obchodne podmienky',
-    bookViaText: 'REZERVUJTE CEZ:',
+    phone: '+421 915 327 597', email: 'info@chataprikastieli.sk',
+    location: 'Necpaly, Turiec', copyright: '2026 Chata pri Kastieli',
+    madeWith: 'Made with love', privacyText: 'Ochrana sukromia',
+    termsText: 'Obchodne podmienky', bookViaText: 'REZERVUJTE CEZ:',
   },
   nav: {
-    home: 'Domov',
-    gallery: 'Galeria',
-    amenities: 'Vybavenie',
-    booking: 'Rezervacia',
-    pricing: 'Cennik',
-    surroundings: 'Okolie',
-    reviews: 'Recenzie',
-    faq: 'FAQ',
-    contact: 'Kontakt',
-    bookNow: 'Rezervovat',
+    home: 'Domov', gallery: 'Galeria', amenities: 'Vybavenie',
+    booking: 'Rezervacia', pricing: 'Cennik', surroundings: 'Okolie',
+    reviews: 'Recenzie', faq: 'FAQ', contact: 'Kontakt', bookNow: 'Rezervovat',
   },
 };
 
@@ -285,86 +189,85 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setAdmin] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
+  const saveTimer = useRef<NodeJS.Timeout | null>(null);
+  const latestData = useRef<SiteData>(defaultData);
 
-  // Load data from server on mount
+  // Load from server on mount
   useEffect(() => {
-    async function loadFromServer() {
+    async function load() {
       try {
         const res = await fetch('/api/admin-content');
         if (res.ok) {
           const serverData = await res.json();
-          // Server data uses our SiteData shape — merge with defaults
           if (serverData && typeof serverData === 'object' && serverData.hero) {
-            setData(prev => deepMerge(prev, serverData));
+            const merged = deepMerge(defaultData, serverData);
+            setData(merged);
+            latestData.current = merged;
           }
         }
       } catch (e) {
-        console.warn('Server load failed, using defaults:', e);
+        console.warn('Server load failed:', e);
       }
-
-      // Check admin session
       if (sessionStorage.getItem('chata_admin') === 'true') setAdmin(true);
       setLoaded(true);
     }
-    loadFromServer();
+    load();
   }, []);
 
-  // Save to server
-  const saveToServer = useCallback(async (newData: SiteData) => {
-    setSaving(true);
-    try {
-      const res = await fetch('/api/admin-content', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-token': ADMIN_PASSWORD,
-        },
-        body: JSON.stringify(newData),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        console.error('Server save failed:', err);
+  // Debounced save - waits 500ms after last change
+  const debouncedSave = useCallback((newData: SiteData) => {
+    latestData.current = newData;
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(async () => {
+      setSaving(true);
+      try {
+        const res = await fetch('/api/admin-content', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-token': ADMIN_PASSWORD,
+          },
+          body: JSON.stringify(latestData.current),
+        });
+        if (!res.ok) console.error('Save failed:', await res.text());
+        else console.log('Saved to server');
+      } catch (e) {
+        console.error('Save error:', e);
+      } finally {
+        setSaving(false);
       }
-    } catch (e) {
-      console.error('Server save error:', e);
-    } finally {
-      setSaving(false);
-    }
+    }, 500);
   }, []);
 
   const updateSection = useCallback(<K extends keyof SiteData>(section: K, value: Partial<SiteData[K]>) => {
     setData(prev => {
       const newData = { ...prev, [section]: { ...prev[section], ...value } };
-      // Save to server (fire and forget, with debounce effect via state)
-      saveToServer(newData);
+      debouncedSave(newData);
       return newData;
     });
-  }, [saveToServer]);
+  }, [debouncedSave]);
 
-  // Upload image to server — returns URL path (not base64!)
+  // Upload image to server
   const uploadImage = useCallback(async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append('file', file);
-
     const res = await fetch('/api/admin-upload', {
       method: 'POST',
       headers: { 'x-admin-token': ADMIN_PASSWORD },
       body: formData,
     });
-
     if (!res.ok) {
       const err = await res.json().catch(() => ({ error: 'Upload failed' }));
       throw new Error(err.error || 'Upload failed');
     }
-
     const result = await res.json();
-    return result.url; // Server returns { url: '/uploads/xxx.jpg' }
+    return result.url;
   }, []);
 
   const resetAll = useCallback(() => {
-    saveToServer(defaultData);
+    debouncedSave(defaultData);
     setData(defaultData);
-  }, [saveToServer]);
+  }, [debouncedSave]);
 
   if (!loaded) return null;
 
@@ -381,7 +284,6 @@ export function useAdmin() {
   return ctx;
 }
 
-// Deep merge helper — merges b into a, preserving a's structure
 function deepMerge(a: any, b: any): any {
   if (b === null || b === undefined) return a;
   if (typeof a !== 'object' || typeof b !== 'object') return b;
