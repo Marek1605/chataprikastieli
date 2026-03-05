@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 
 const ADMIN_PASSWORD = 'ChataAdmin2025!';
 
@@ -285,6 +285,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setAdmin] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
+  const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load data from server on mount
   useEffect(() => {
@@ -310,28 +311,23 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Save to server
-  const saveToServer = useCallback(async (newData: SiteData) => {
-    setSaving(true);
-    try {
-      const res = await fetch('/api/admin-content', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-admin-token': ADMIN_PASSWORD,
-        },
-        body: JSON.stringify(newData),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        console.error('Server save failed:', err);
+  const saveToServer = useCallback((newData: SiteData) => {
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(async () => {
+      setSaving(true);
+      try {
+        await fetch('/api/admin-content', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-admin-token': ADMIN_PASSWORD },
+          body: JSON.stringify(newData),
+        });
+      } catch (e) {
+        console.error('Save error:', e);
+      } finally {
+        setSaving(false);
       }
-    } catch (e) {
-      console.error('Server save error:', e);
-    } finally {
-      setSaving(false);
-    }
+    }, 500);
   }, []);
-
   const updateSection = useCallback(<K extends keyof SiteData>(section: K, value: Partial<SiteData[K]>) => {
     setData(prev => {
       const newData = { ...prev, [section]: { ...prev[section], ...value } };
