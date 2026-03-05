@@ -2,7 +2,7 @@
 import { useState, useCallback } from 'react';
 import { useAdmin } from '@/lib/AdminContext';
 
-type Tab = 'hero' | 'overview' | 'gallery' | 'amenities' | 'atmosphere' | 'pricing' | 'booking' | 'surroundings' | 'reviews' | 'faq' | 'contact' | 'footer' | 'nav' | 'settings';
+type Tab = 'hero' | 'reset' | 'overview' | 'gallery' | 'amenities' | 'atmosphere' | 'pricing' | 'booking' | 'surroundings' | 'reviews' | 'faq' | 'contact' | 'footer' | 'nav' | 'settings';
 
 export default function AdminSidebar() {
   const { data, isAdmin, setAdmin, updateSection, resetAll, uploadImage: serverUpload, saving } = useAdmin();
@@ -74,6 +74,7 @@ export default function AdminSidebar() {
     { id: 'contact', icon: '📞', label: 'Kontakt' },
     { id: 'footer', icon: '📄', label: 'Footer' },
     { id: 'nav', icon: '🧭', label: 'Navigácia' },
+    { id: 'reset', icon: '🔋', label: 'Reset pobyt' },
     { id: 'settings', icon: '⚙️', label: 'Reset' },
   ];
 
@@ -389,6 +390,29 @@ export default function AdminSidebar() {
                   <div><label className={labelClass}>FAQ</label><input className={inputClass} value={data.nav.faq} onChange={e => updateSection('nav', { faq: e.target.value })} /></div>
                   <div><label className={labelClass}>Kontakt</label><input className={inputClass} value={data.nav.contact} onChange={e => updateSection('nav', { contact: e.target.value })} /></div>
                   <div><label className={labelClass}>Tlačidlo Rezervovať</label><input className={inputClass} value={data.nav.bookNow} onChange={e => updateSection('nav', { bookNow: e.target.value })} /></div>
+                </div>
+              )}
+
+
+              {/* RESET POBYT */}
+              {tab === 'reset' && (
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center border-b pb-2">
+                    <h3 className="font-bold">🔋 Reset pobyt ({(data.reset?.items || []).length})</h3>
+                    <button type="button" onClick={() => updateSection('reset', { items: [...(data.reset?.items || []), { icon: '✨', title: 'Nový', desc: 'Popis...' }] })} className="px-3 py-1 bg-amber-500 text-white rounded text-sm font-bold">➕</button>
+                  </div>
+                  <div><label className={labelClass}>Label</label><input className={inputClass} value={data.reset?.label || ''} onChange={e => updateSection('reset', { label: e.target.value })} /></div>
+                  <div><label className={labelClass}>Titulok</label><input className={inputClass} value={data.reset?.title || ''} onChange={e => updateSection('reset', { title: e.target.value })} /></div>
+                  {(data.reset?.items || []).map((item: any, i: number) => (
+                    <div key={i} className="p-2 bg-gray-50 rounded space-y-2">
+                      <div className="flex gap-2 items-center">
+                        <input className="w-12 p-1 border rounded text-center" value={item.icon} onChange={e => { const items = [...(data.reset?.items || [])]; items[i] = { ...items[i], icon: e.target.value }; updateSection('reset', { items }); }} />
+                        <input className="flex-1 p-1 border rounded text-sm" value={item.title} onChange={e => { const items = [...(data.reset?.items || [])]; items[i] = { ...items[i], title: e.target.value }; updateSection('reset', { items }); }} />
+                        <button type="button" className={delBtnClass} onClick={() => updateSection('reset', { items: (data.reset?.items || []).filter((_: any, idx: number) => idx !== i) })}>✕</button>
+                      </div>
+                      <textarea className="w-full p-1 border rounded text-xs" rows={2} value={item.desc} onChange={e => { const items = [...(data.reset?.items || [])]; items[i] = { ...items[i], desc: e.target.value }; updateSection('reset', { items }); }} />
+                    </div>
+                  ))}
                 </div>
               )}
 

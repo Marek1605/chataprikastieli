@@ -48,6 +48,11 @@ interface SiteData {
     text1: string;
     text2: string;
   };
+  reset: {
+    label: string;
+    title: string;
+    items: { icon: string; title: string; desc: string; }[];
+  };
   pricing: {
     label: string;
     title: string;
@@ -180,6 +185,16 @@ const defaultData: SiteData = {
     eveningImage: '/assets/gallery-3.jpg',
     text1: 'Rano vas zobudi jemne svetlo prenikajuce cez okna s vyhladom na hory.',
     text2: 'Vecer si vychutnajte zapad slnka z terasy s poharom vina.',
+  },
+  reset: {
+    label: 'RESET POBYT',
+    title: 'Nacerpajte novu energiu',
+    items: [
+      { icon: '☀️', title: 'Ranne prebuzenie', desc: 'Prebudte sa s prirodzenym svetlom a vyhladom na hory.' },
+      { icon: '🚶', title: 'Prechadzky', desc: 'Objavte krasu okolitych lesov a dolin.' },
+      { icon: '📵', title: 'Digital detox', desc: 'Odlozte telefon a uzite si cas s blizkymi.' },
+      { icon: '😴', title: 'Kvalitny oddych', desc: 'Cisty horsky vzduch a absolutne ticho.' },
+    ],
   },
   pricing: {
     label: 'CENNIK',
