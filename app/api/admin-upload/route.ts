@@ -6,7 +6,7 @@ import crypto from 'crypto';
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ChataAdmin2025!';
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
-const UPLOAD_DIR = '/tmp/uploads';
+const UPLOAD_DIR = '/app/uploads';
 
 const MAGIC: Record<string, number[]> = {
   'image/jpeg': [0xFF, 0xD8, 0xFF],

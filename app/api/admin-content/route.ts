@@ -3,7 +3,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'ChataAdmin2025!';
-const DATA_DIR = '/tmp/data';
+const DATA_DIR = '/app/data';
 const CONTENT_FILE = path.join(DATA_DIR, 'site-content.json');
 
 function verifyAuth(req: NextRequest): boolean {
