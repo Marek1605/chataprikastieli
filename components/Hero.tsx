@@ -21,7 +21,7 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-br from-wood/70 via-wood-dark/80 to-graphite/90 z-10" />
         <SafeImage 
           src={h.backgroundImage} 
-          alt="Chata pri Kastieli"
+          alt="Chata pri Kaštieli"
           fallback="/assets/hero.jpg"
           className="absolute inset-0 w-full h-full object-cover"
         />

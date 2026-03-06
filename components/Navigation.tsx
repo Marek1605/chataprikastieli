@@ -94,7 +94,7 @@ export default function Navigation() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-forest to-wood flex items-center justify-center shadow-md">
               <span className="text-xl">🏠</span>
             </div>
-            <span className="font-display text-xl text-graphite hidden sm:block">Chata pri Kastieli</span>
+            <span className="font-display text-xl text-graphite hidden sm:block">Chata pri Kaštieli</span>
           </button>
 
           <div className="hidden lg:flex items-center gap-1">
