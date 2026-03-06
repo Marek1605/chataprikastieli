@@ -263,7 +263,7 @@ const defaultData: SiteData = {
     phone: '+421 915 327 597',
     email: 'info@chataprikastieli.sk',
     location: 'Necpaly, Turiec',
-    copyright: '2026 Chata pri Kastieli',
+    copyright: '2026 Chata pri Kaštieli',
     madeWith: 'Made with love',
     privacyText: 'Ochrana súkromia',
     termsText: 'Obchodné podmienky',
