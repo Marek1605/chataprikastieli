@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from '@/lib/navigation';
-import { locales } from '@/lib/i18n';
+import { useRouter, usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { locales } from '@/lib/i18n';
+import { useLocale, useTranslations } from 'next-intl';
 import { useAdmin } from '@/lib/AdminContext';
 
 const languageConfig: Record<string, { flag: string; name: string; nativeName: string }> = {
@@ -68,7 +68,7 @@ export default function Navigation() {
 
   const changeLanguage = useCallback((newLocale: string) => {
     setIsLangOpen(false);
-    router.replace(pathname, { locale: newLocale });
+    const newPath = newLocale === 'sk' ? '/' : '/' + newLocale; router.push(newPath);
   }, [router, pathname]);
 
   const navItems = [
