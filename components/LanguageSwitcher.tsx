@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useLocale } from 'next-intl';
-import { useRouter, usePathname } from 'next/navigation';
 
 const languages = [
   { code: 'sk', flag: '🇸🇰', name: 'SK' },
@@ -13,8 +12,6 @@ const languages = [
 
 export default function LanguageSwitcher() {
   const locale = useLocale();
-  const router = useRouter();
-  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -28,16 +25,9 @@ export default function LanguageSwitcher() {
 
   const switchLocale = (newLocale: string) => {
     setOpen(false);
-    // Remove current locale prefix from pathname
-    let path = pathname;
-    for (const lang of languages) {
-      if (path.startsWith('/' + lang.code + '/') || path === '/' + lang.code) {
-        path = path.slice(lang.code.length + 1) || '/';
-        break;
-      }
-    }
-    const newPath = newLocale === 'sk' ? (path || '/') : '/' + newLocale + (path === '/' ? '' : path);
-    router.push(newPath);
+    // Full page navigation - works in all browsers including Firefox
+    const newPath = newLocale === 'sk' ? '/' : '/' + newLocale;
+    window.location.href = newPath;
   };
 
   const current = languages.find(l => l.code === locale) || languages[0];
